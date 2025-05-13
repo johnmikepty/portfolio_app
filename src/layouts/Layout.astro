@@ -1,0 +1,65 @@
+---
+import type { HTMLAttributes } from 'astro/types'
+import ResumeControlPanel from '../components/ResumeControlPanel.astro'
+import { getMySelf } from '../data/myself'
+import '../styles/global.css?5'
+
+type Props = HTMLAttributes<'main'>
+
+const { props } = Astro
+const { name } = await getMySelf()
+---
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta http-equiv="x-ua-compatible" content="ie=edge">
+
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.1.1/normalize.min.css" />
+		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" />
+		
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Ubuntu:400,400i,700,700i&display=swap" rel="stylesheet">
+
+		<meta name="description" content={`Resume of ${name}`}>
+		<meta name="keywords" content="">
+
+		<title>{name} - Resume</title>
+	</head>
+	<body>
+		<main {...props}>
+			<slot />
+		</main>
+	</body>
+
+	<ResumeControlPanel />
+</html>
+
+<style>
+	body {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+	}
+
+	main {
+		margin: 0 auto;
+		outline: 1px solid #ddd;
+		width: 8.5in;
+		height: 11in;
+		padding: 0.15in 0.15in;
+	}
+
+	@media not print {
+		main {
+			outline: 1px dotted #0004;
+			margin-top: 64px;
+		}
+	}
+</style>

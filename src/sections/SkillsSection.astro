@@ -1,0 +1,18 @@
+---
+import { Icon } from 'astro-icon/components'
+import { getSkillSections } from '../data/skillsection'
+import RenderMarkdown from '../components/RenderMarkdown.astro'
+
+const skillGroups = await getSkillSections()
+---
+
+<section id="skills" data-item-count={skillGroups.length}>
+    <div class="section-title">
+        <h2>Skills</h2>
+        <Icon name="ri:code-s-slash-fill" />
+    </div>
+
+    <article>
+        {skillGroups.map(({ slug }) => <RenderMarkdown type="skillsection" slug={slug} />)}
+    </article>
+</section>

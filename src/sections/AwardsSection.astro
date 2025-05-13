@@ -1,0 +1,36 @@
+---
+import { Icon } from 'astro-icon/components'
+import { getAwards } from '../data/awards'
+import RenderMarkdown from '../components/RenderMarkdown.astro'
+
+const awards = await getAwards()
+---
+
+<section id="awards" data-item-count={awards.length}>
+    <div class="section-title">
+        <h2>Awards</h2>
+        <Icon name="ri:trophy-fill" />
+    </div>
+
+    <div class="awards">
+        {awards.map(({ slug, data: { name } }) => (
+            <article class="award">
+                <h3>{name}</h3>
+                <RenderMarkdown type="awards" slug={slug} />
+            </article>
+        ))}
+    </div>
+</section>
+
+<style>
+    .award {
+        display: flex;
+        flex-direction: column;
+    }
+</style>
+
+<style is:global>
+    body:not(.awards) #awards {
+        display: none;
+    }
+</style>

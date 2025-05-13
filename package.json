@@ -1,7 +1,23 @@
 {
   "name": "portfolio_app",
   "type": "module",
-  "version": "0.0.1",
+  "version": "1.0",
+  "description": "Welcome to my personal space, form Panama to the World.",
+  "author": {
+		"name": "Juan Miguel Torres",
+		"email": "johnmiketower@gmail.com",
+		"url": "https://johnmikepty.info"
+	},
+  "repository": {
+		"type": "git",
+		"url": "https://github.com/johnmikepty/portfolio_app"
+	},
+  "keywords": [
+		"astro-template",
+		"astro-resume",
+    "johnmikepty",
+    "johnmiketower"
+	],
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
@@ -9,6 +25,16 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^5.7.4"
+    "@astrojs/check": "^0.9.3",
+    "@iconify-json/logos": "latest",
+    "@iconify-json/ri": "latest",
+    "@iconify-json/skill-icons": "latest",
+    "astro": "^4.15.2",
+
+    "typescript": "^5.5.4"
+  },
+  "devDependencies": {
+    "astro-icon": "^1.1.5"
   }
 }
+

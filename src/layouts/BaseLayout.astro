@@ -1,0 +1,16 @@
+---
+// src/layouts/BaseLayout.astro
+import '../styles/global.css';
+---
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width" />
+  <title><slot name="title" /></title>
+</head>
+<body>
+  <slot />
+</body>
+</html>

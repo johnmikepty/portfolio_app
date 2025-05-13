@@ -1,0 +1,55 @@
+---
+import { Icon } from 'astro-icon/components'
+import RenderMarkdown from '../components/RenderMarkdown.astro'
+import { getProjects } from '../data/projects'
+
+const projects = await getProjects()
+---
+
+<section id="experience" data-item-count={projects.length}>
+    <div class="section-title">
+        <h2>Projects</h2>
+        <Icon name="ri:open-source-fill" />
+    </div>
+
+    <div class="projects">
+        {projects.map(({ slug, data: { name, icons } }) => (
+            <article>
+                <div class="title">
+                    <h3>{name}</h3>
+                    {/* {icons?.length && (
+                        <div class="icons">
+                            <Icon name="ri:arrow-drop-left-line" />
+                            {icons.map(icon => (
+                                <Icon name={icon} />
+                            ))}
+                            <Icon name="ri:arrow-drop-right-line" />
+                        </div>
+                    )} */}
+                </div>
+                <div class="description">
+                    <RenderMarkdown type="projects" slug={slug} />
+                </div>
+            </article>
+        ))}
+    </div>
+</section>
+
+<style>
+    .title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 2ch;
+    }
+
+    /* .icons {
+        display: flex;
+        align-items: center;
+        gap: 0.5ch;
+        font-size: 1.25em;
+    } */
+
+    .description {
+    }
+</style>
