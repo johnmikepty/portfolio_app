@@ -12,9 +12,87 @@
     --col-fg: black;
     --col-bg: white;
 
-    --col-primary: rgb(17, 85, 204);
+    --col-primary: #00786c;
 	--col-link: rgb(66, 120, 214);
+
+
+	--accent-color: #00786c;
+	--align-items-header: center;
+	--block-heading-left-layout: HORIZONTAL;
+	--block-heading-right-layout: HORIZONTAL;
+	--border-color-header: #000;
+	--border-spacing-heading: 8pt;
+	--border-spacing-section-title: 3pt;
+	--border-width-header-bottom: 1pt;
+	--border-width-header-top: 0;
+	--border-width-section-title: 1pt;
+	--bullet-char: '•';
+	--bullet-size: 12pt;
+	--bullet-weight: 300;
+	--company-layout: HORIZONTAL;
+	--date-alignment: LEFT;
+	--date-format: NUMBERS;
+	--education-by: DEGREE;
+	--education-layout: STACKED;
+	--font-family: Tinos;
+	--font-size-body-copy: 10pt;
+	--font-size-full-name: 22pt;
+	--font-size-heading-primary: 12pt;
+	--font-size-heading-secondary: 10pt;
+	--font-size-minor-copy: 10pt;
+	--font-size-section-title: 10pt;
+	--font-size-separator: 11pt;
+	--font-weight-body-copy: 300;
+	--font-weight-full-name: 600;
+	--font-weight-heading-primary: 600;
+	--font-weight-heading-secondary-work: 600;
+	--font-weight-heading-secondary: 300;
+	--font-weight-minor-copy-work: 600;
+	--font-weight-minor-copy: 300;
+	--font-weight-section-title: 300;
+	--font-weight-separator: 300;
+	--header-layout: NORMAL;
+	--letter-spacing-heading-primary: 0.0;
+	--letter-spacing-heading-secondary: 0.0;
+	--letter-spacing-section-title: 0.0;
+	--line-height-block-heading: 100%;
+	--line-height-list-item: 130%;
+	--line-height: 130%;
+	--location-alignment: LEFT;
+	--padding-x: 0.75in;
+	--padding-y: 0.75in;
+	--page-size: letter;
+	--position-alignment: LEFT;
+	--separator-char: '•';
+	--separator-spacing: 0 4pt;
+	--skills-layout-columns: 3;
+	--skills-layout: COMMA;
+	--spacing-block-heading-sub-block: 4pt;
+	--spacing-block-heading: 4pt;
+	--spacing-content-blocks: 4pt;
+	--spacing-header-bottom: 12pt;
+	--spacing-header-bottom: var(--border-spacing-heading, 0);
+	--spacing-header-content: 4pt;
+	--spacing-list: 4pt;
+	--spacing-section-in-block: 4pt;
+	--spacing-section-in-sub-block: 4pt;
+	--spacing-section-sub-blocks: 4pt;
+	--spacing-sections: 12pt;
+	--spacing-titles-content: 4pt;
+	--text-align-header: center;
+	--text-transform-full-name: none;
+	--text-transform-heading-primary: none;
+	--text-transform-heading-secondary: none;
+	--text-transform-minor-copy: none;
+	--text-transform-section-title: uppercase;
+	--work-dates-by: COMPANY;
+	--work-experience-by: COMPANY;
+	--work-locations-by: COMPANY;
+	--work-type-alignment: LEFT;
 }
+
+
+
 
 @font-face {
 	font-family: 'Nunito';
@@ -61,6 +139,16 @@ body {
 body.redact .personal, body.redact .personal * {
 	background: black!important;
 	color: black!important;
+}
+
+.full-name {
+    padding-bottom: var(--spacing-full-name-bottom, 0);
+    color: var(--color-full-name, var(--accent-color));
+    font-weight: var(--font-weight-full-name, var(--font-weight));
+    font-size: var(--font-size-full-name, var(--font-size));
+    line-height: var(--line-height-full-name, var(--line-height));
+    text-transform: var(--text-transform-full-name);
+    word-break: break-word;
 }
 
 p {
@@ -178,7 +266,7 @@ hr {
 	justify-content: space-between;
 	align-items: center;
 	gap: 1ch;
-	border-bottom: 2px solid #00000044;
+	border-bottom: 1.5px solid var(--col-fg);;
 
 	& > svg {
 		font-size: 1.5em;

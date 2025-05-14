@@ -1,26 +1,30 @@
 {
-  "name": "portfolio_app",
+  "name": "astro-html-resume",
   "type": "module",
-  "version": "1.0",
-  "description": "Welcome to my personal space, form Panama to the World.",
-  "author": {
-		"name": "Juan Miguel Torres",
-		"email": "johnmiketower@gmail.com",
-		"url": "https://johnmikepty.info"
+  "version": "2.0.0",
+  "description": "Create a neat looking resume with yaml files and Astro.",
+	"author": {
+		"name": "William Moodhe",
+		"email": "williammoodhe@gmail.com",
+		"url": "https://average.website"
 	},
   "repository": {
 		"type": "git",
-		"url": "https://github.com/johnmikepty/portfolio_app"
+		"url": "https://github.com/jetboom/astro-html-resume"
 	},
   "keywords": [
+		"astro",
+		"astrojs",
 		"astro-template",
-		"astro-resume",
-    "johnmikepty",
-    "johnmiketower"
+		"astro-resume"
 	],
+	"bugs": {
+		"url": "https://github.com/jetboom/astro-html-resume/issues"
+	},
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "start": "astro dev",
+    "build": "astro check && astro build",
     "preview": "astro preview",
     "astro": "astro"
   },
@@ -28,13 +32,11 @@
     "@astrojs/check": "^0.9.3",
     "@iconify-json/logos": "latest",
     "@iconify-json/ri": "latest",
-    "@iconify-json/skill-icons": "latest",
+		"@iconify-json/skill-icons": "latest",
     "astro": "^4.15.2",
-
     "typescript": "^5.5.4"
   },
   "devDependencies": {
-    "astro-icon": "^1.1.5"
+    "astro-icon": "^1.1.1"
   }
 }
-

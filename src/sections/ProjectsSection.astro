@@ -1,12 +1,12 @@
 ---
 import { Icon } from 'astro-icon/components'
-import RenderMarkdown from '../components/RenderMarkdown.astro'
-import { getProjects } from '../data/projects'
+import RenderMarkdown from '@/components/RenderMarkdown.astro'
+import { getProjects } from '@/data/projects'
 
 const projects = await getProjects()
 ---
 
-<section id="experience" data-item-count={projects.length}>
+<section id="projects" data-item-count={projects.length}>
     <div class="section-title">
         <h2>Projects</h2>
         <Icon name="ri:open-source-fill" />
@@ -51,5 +51,11 @@ const projects = await getProjects()
     } */
 
     .description {
+    }
+</style>
+
+<style is:global>
+    body.hide-projects #projects {
+        display: none;
     }
 </style>

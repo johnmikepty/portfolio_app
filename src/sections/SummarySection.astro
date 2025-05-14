@@ -1,8 +1,8 @@
 ---
 import { Icon } from 'astro-icon/components'
-import RenderMarkdown from '../components/RenderMarkdown.astro'
-import { getMySelf } from '../data/myself'
-import { stripProtocol } from '../util'
+import RenderMarkdown from '@/components/RenderMarkdown.astro'
+import { getMySelf } from '@/data/myself'
+import { stripProtocol } from '@/util'
 
 const {
 	name,
@@ -11,13 +11,13 @@ const {
     phone,
     linkedin,
     github,
-    website,
+    //website,
     // location,
 } = await getMySelf()
 ---
 
 <section id="summary">
-    <h1 class="personal">{name}</h1>
+    <h1 class="personal full-name">{name}</h1>
     <!-- <b>{title}</b> -->
 
     <div class="contacts">
@@ -42,11 +42,11 @@ const {
             <span class="personal">{email}</span>
             <!-- <a href={`mailto:${email}`}>{email}</a> -->
         </div>
-        |
+        <!-- |
         <div>
             <Icon name="ri:computer-line" class="text-primary" />
             <a href={website} class="personal">{stripProtocol(website)}</a>
-        </div>
+        </div> -->
         <!-- | -->
         <!-- <div>
             <Icon name="ri:map-pin-2-fill" class="text-primary" />
@@ -58,7 +58,6 @@ const {
         <RenderMarkdown type="myself" slug="myself" />
     </div>
 </section>
-
 <style>
     #summary {
         display: flex;
@@ -76,7 +75,7 @@ const {
         flex-wrap: wrap;
         justify-content: center;
         gap: 0.5em;
-        border-bottom: 2px dotted var(--col-fg);
+        border-bottom: 1.5px solid var(--col-fg);
         padding-bottom: 0.5rem;
         margin-bottom: 0.25rem;
 
@@ -90,13 +89,13 @@ const {
 </style>
 
 <style is:global>
-    body:not(.summary) {
+    body.hide-summary {
         & .summary-text {
             display: none;
         }
 
         & .contacts {
-            border-bottom: 0;
+            border-bottom: 0;ot
         }
     }
 </style>

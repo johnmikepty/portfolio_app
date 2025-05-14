@@ -1,8 +1,9 @@
 ---
 import type { HTMLAttributes } from 'astro/types'
-import ResumeControlPanel from '../components/ResumeControlPanel.astro'
-import { getMySelf } from '../data/myself'
-import '../styles/global.css?5'
+import ResumeControlPanel from '@/components/ResumeControlPanel.astro'
+import { getMySelf } from '@/data/myself'
+import '@/styles/global.css?5'
+import '@/styles/tinosfont.css?5'
 
 type Props = HTMLAttributes<'main'>
 
@@ -21,10 +22,10 @@ const { name } = await getMySelf()
 		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.1.1/normalize.min.css" />
 		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" />
 		
-		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<!-- <link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-		<link href="https://fonts.googleapis.com/css?family=Ubuntu:400,400i,700,700i&display=swap" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Ubuntu:400,400i,700,700i&display=swap" rel="stylesheet"> -->
 
 		<meta name="description" content={`Resume of ${name}`}>
 		<meta name="keywords" content="">
@@ -50,15 +51,15 @@ const { name } = await getMySelf()
 
 	main {
 		margin: 0 auto;
-		outline: 1px solid #ddd;
+		/* outline: 1px solid #ddd; */
 		width: 8.5in;
-		height: 11in;
+		/* height: 11in; */
 		padding: 0.15in 0.15in;
 	}
 
 	@media not print {
 		main {
-			outline: 1px dotted #0004;
+			outline: 1px solid #0004;
 			margin-top: 64px;
 		}
 	}

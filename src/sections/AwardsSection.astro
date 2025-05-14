@@ -1,7 +1,7 @@
 ---
 import { Icon } from 'astro-icon/components'
-import { getAwards } from '../data/awards'
-import RenderMarkdown from '../components/RenderMarkdown.astro'
+import { getAwards } from '@/data/awards'
+import RenderMarkdown from '@/components/RenderMarkdown.astro'
 
 const awards = await getAwards()
 ---
@@ -30,7 +30,7 @@ const awards = await getAwards()
 </style>
 
 <style is:global>
-    body:not(.awards) #awards {
+    body.hide-awards #awards {
         display: none;
     }
 </style>

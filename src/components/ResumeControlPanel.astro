@@ -7,22 +7,26 @@ type ResumeOptionType = {
 
 const options: ResumeOptionType[] = [
     {
-        name: 'Show professional summary',
-        toggle: 'summary',
+        name: 'Hide professional summary',
+        toggle: 'hide-summary',
         tip: 'You may wish to exclude your summary and submit it separately as a cover letter.',
     },
     {
-        name: 'Show references',
-        toggle: 'references',
+        name: 'Hide references',
+        toggle: 'hide-references',
     },
     {
-        name: 'Show awards',
-        toggle: 'awards',
+        name: 'Hide awards',
+        toggle: 'hide-awards',
     },
     {
         name: 'Hide all icons and images',
         toggle: 'no-icons',
         tip: 'ATS may get confused on images and icons.',
+    },
+    {
+        name: 'Hide Projects',
+        toggle: 'hide-projects',
     },
     {
         name: 'Redact personal information',
@@ -75,5 +79,9 @@ const options: ResumeOptionType[] = [
         #control-panel {
             display: none;
         }
+
+        main {
+			outline:none;
+		}
     }
 </style>

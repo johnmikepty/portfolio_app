@@ -1,41 +1,32 @@
 ---
 import { Icon } from 'astro-icon/components'
 import RenderMarkdown from '@/components/RenderMarkdown.astro'
-import { getExperience } from '@/data/experience'
+import { getCertifications } from '@/data/certifications'
 import { getDisplayDate } from '@/util'
 
-const experience = await getExperience()
+const certifications = await getCertifications()
 ---
 
-<section id="experience" data-item-count={experience.length}>
+<section id="certifications" data-item-count={certifications.length}>
     <div class="section-title">
-        <h2>Experience</h2>
+        <h2>Certifications</h2>
         <Icon name="ri:briefcase-4-fill" />
     </div>
 
     <div>
-        {experience.map(({ slug, data: { name, url, title, location, startYear, startMonth, endYear, endMonth } }) => (
-            <article class="experience">
+        {certifications.map(({ slug, data: { mentorship, title, website, year } }) => (
+            <article class="certifications">
                 <div class="header">
                     <h3 class="title">{title}</h3>
 
                     <span>&mdash;</span>
 
                     <div class="company-name">
-                        <span class="personal">{name}</span>
-                        {url && (
-                            <a href={url} target="_blank" referrerpolicy="no-referrer" class="ez-click is-icon">
+                        <span class="personal">{mentorship}</span>
+                        {website && (
+                            <a href={website} target="_blank" referrerpolicy="no-referrer" class="ez-click is-icon">
                                 <Icon name="ri:external-link-line" />
                             </a>
-                        )}
-                    </div>
-
-                    <div class="grow" />
-
-                    <div class="location">
-                        {location && (
-                            <Icon name="ri:map-pin-2-line" />
-                            <span class="personal">{location}</span>
                         )}
                     </div>
 
@@ -43,14 +34,14 @@ const experience = await getExperience()
 
                     <div class="dates">
                         <Icon name="ri:calendar-line" />
-                        <span>{getDisplayDate(startYear, startMonth)} - {getDisplayDate(endYear, endMonth)}</span>
+                        <span>{year}</span>
                     </div>
                 </div>
 
                 {/* <hr /> */}
 
                 <div>
-                    {<RenderMarkdown type="experience" slug={slug} />}
+                    {<RenderMarkdown type="certifications" slug={slug} />}
                 </div>
             </article>
         ))}
@@ -58,7 +49,7 @@ const experience = await getExperience()
 </section>
 
 <style>
-    #experience {
+    #certifications {
         /** Page break inside because this is the biggest section usually. */
         page-break-inside: auto;
         break-inside: auto;
@@ -66,7 +57,7 @@ const experience = await getExperience()
 
     .header {
         display: flex;
-        justify-content: space-between;
+        /* justify-content: space-between; */
         align-items: baseline;
         gap: 1ch;
     }

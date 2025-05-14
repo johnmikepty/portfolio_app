@@ -1,6 +1,6 @@
 ---
 import { Icon } from 'astro-icon/components'
-import { getReferences } from '../data/references'
+import { getReferences } from '@/data/references'
 
 const references = await getReferences()
 ---
@@ -37,7 +37,7 @@ const references = await getReferences()
 </style>
 
 <style is:global>
-    body:not(.references) #references {
+    body.hide-references #references {
         display: none;
     }
 </style>

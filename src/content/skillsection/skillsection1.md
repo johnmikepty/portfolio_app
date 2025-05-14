@@ -1,19 +1,16 @@
 <!-- Skills should be in order of priority from left to right and top to bottom. -->
 <!-- Tailor your resume by **BOLDING** specific skills a job is looking for! -->
 
-- TypeScript - JavaScript - Node.js - React - Next.js - Express.js - Python - Django - Vue - Svelte - C# - .NET - Java - C++ - C - Lua
+- TypeScript - JavaScript - Node.js - React - Next.js - Express.js - Python - C# - .NET - Java  - C - PHP - Spring Boot
 
-- HTML5 - CSS3 - ES6 - Web Sockets - SQL - NoSQL - Redux - REST APIs - Webpack - PHP - Laravel - Astro - Ember - jQuery
+- HTML5 - CSS3 - ES6 - SQL - NoSQL - Redux - REST APIs - Webpack - Astro - jQuery
 
-- GraphQL - Redux - Mobx - MongoDB - DynamoDB - PostgresQL - MySQL - Redis - Prisma - React Query - Migrations - zod
+- GraphQL - MongoDB - Prisma - React Query - Oracle SQL - MySql - MSSql - PostgresQL 
 
-- Tailwind - Bootstrap - Material UI - styled - Ant Design - Storybook - Data Visualization - Highcharts - D3.js - Chart.js
+- Tailwind - Bootstrap - Material UI - Semantic UI - Dojo - styled - Data Visualization - Highcharts - Chart.js
 
-- Microservices - Amazon Web Services (AWS) - Google Cloud Platform (GCP) - Azure - Serverless - Lambda - S3 - EC2 - ECS
-
-- CI/CD - Docker - Kubernetes - Datadog - Git - GitHub Actions - Bitbucket - Cloudflare - Linux - NGINX - ESLint - Prettier
-
-- Integration, e2e, A/B, unit testing - Jest - Cypress - Distributed Systems - Authentication - Datadog - Observability
+- CI/CD - Google Cloud Platform (GCP) - Azure DevOps- Docker - Docker Swarm - Git - GitHub Actions - Bitbucket - GitLab - Jenkins - Portainer
+- Integration, unit testing - Jest - Appium - Cucumber - NUnit - Graylog - New Relic
 
 <!-- These are commented and won't appear -->
 <!--
