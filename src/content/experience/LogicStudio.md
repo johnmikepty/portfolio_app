@@ -9,6 +9,4 @@ endMonth: 4
 endYear: 2015
 ---
 
-- Redesigned MDCA (BOAT) application for vessel inspections
-- Redesigned Pilot Assignment app for pilot allocation to transiting vessels
-- Redesigned Signal Station Workbench for managing ship arrival and departure events
+- Redeveloped critical canal operation apps (vessel inspection, pilot assignment, ship traffic) with focus on functional and usability testing.

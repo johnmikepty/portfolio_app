@@ -9,10 +9,18 @@ endMonth: 3
 endYear: 2024
 ---
 
-- **Lead** a team within the Cashier division responsible for developing integrations and rules for financial services in the cashier system.
+<!-- - **Lead** a team within the Cashier division responsible for developing integrations and rules for financial services in the cashier system.
 - Supervised developers and QA dedicated to projects focusing on cashier integrations and financial regulations.
 - Developed **.NET Core** applications for credit card file loading, processing, and whitelisting
 - Integrate 3d party **APIs** for **credit card** processors, **EWallets**, **ECheck**, and **cryptocurrencies** (Bitcoin, Ethereum, Litecoin).
 - Maintained the MoneyStream system (Cashier and Backoffice) for deposit and withdrawal control.
 - Managed campaign services for payment operations and transaction updates. Using **C#** ingtegrating **3d Parties API**.
-- Developed and deployed an automated workflow using **Microsoft Power Automate** to streamline internal approval processes for expense reports, integrating **Microsoft Teams**, **Outlook**, and **SharePoint**.
+- Developed and deployed an automated workflow using **Microsoft Power Automate** to streamline internal approval processes for expense reports, integrating **Microsoft Teams**, **Outlook**, and **SharePoint**. -->
+
+- Supervised QA engineers focused on financial API integrations and payment platform testing.
+
+- Designed and implemented automated testing for cashier systems using **.NET Core**.
+
+- Managed MoneyStream (cashier/backoffice), ensuring test coverage for transactions, deposits, withdrawals.
+
+- Built Microsoft **Power Automate** flows with validation and test checkpoints integrated.
