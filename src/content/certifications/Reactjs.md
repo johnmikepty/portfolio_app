@@ -5,4 +5,4 @@ website: https://www.linkedin.com/learning/certificates/ad02442f09d53c5dff91305e
 year: 2024
 ---
 
-- Top Skill cover **React.js**.
+<!-- - Top Skill cover **React.js**. -->

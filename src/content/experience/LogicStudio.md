@@ -9,4 +9,4 @@ endMonth: 4
 endYear: 2015
 ---
 
-- Redeveloped critical canal operation apps (vessel inspection, pilot assignment, ship traffic) with focus on functional and usability testing.
+- Redeveloped mission-critical canal operations apps (vessel inspection, pilot assignment, ship traffic) using .NET Framework, Oracle PL/SQL, and Dojo.
