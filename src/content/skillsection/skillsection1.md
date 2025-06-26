@@ -3,7 +3,7 @@
  
 
 **Programming & Frameworks:**
-- .NET Core, .NET Framework, C#, Python, Java, C, PHP, Spring Boot, TypeScript, JavaScript Node.js, React, Next.js, Express.js, MAUI, Semantic UI, HTML5, CSS3, ES6, Redux, Webpack, Astro, jQuery, Prisma, React Query
+- .NET Core, .NET Framework, C#, Python, Java, C, PHP, Spring Boot, TypeScript, JavaScript, Node.js, Angular, Vue.js, React, Astro, Next.js, Express.js, MAUI, Semantic UI, HTML5, CSS3, ES6, Redux, Webpack, Astro, jQuery, Prisma, React Query
 
 **DevOps & Automation:**
 - Google Cloud Platform (GCP), Azure DevOps, Docker, Docker Swarm, Git, GitHub Actions, Bitbucket, GitLab, Jenkins, Portainer, Graylog, New Relic

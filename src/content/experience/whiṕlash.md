@@ -11,4 +11,4 @@ endYear: 2025
 
 - Developed a Chrome extension for crypto trading using **React**, **MAUI**, **Node.js**, **Express**, and **MongoDB**.
 - Built eBay inventory management tools (**React, Redux, Node.js, Express, Postgres, eBay API**).
-- Automation Testing Using **Appium** with WDIO and **Cucumber** on **Typescript**
+- Develop an Automation Testing tool for an app over android an iOS. Using **Appium** with WDIO and **Cucumber** on **Typescript**

@@ -10,5 +10,4 @@ endYear: 2014
 ---
 
 - Built SMS-based market pricing systems and QlikView dashboards.
-
-- Led QA for national HR attendance management systems (ASP.NET, MSSQL).
+- Create an web application to centralize the HR attendance management systems (ASP.NET, MSSQL).

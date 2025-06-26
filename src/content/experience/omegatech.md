@@ -9,11 +9,11 @@ endMonth: 3
 endYear: 2024
 ---
 
-- Led the Cashier division, managing integrations for financial services and supervising QA engineers.
+- Led a team in the Cashier division, managing integrations for financial services and supervising Developers and QA engineers.
 
 - Designed and implemented .NET Core applications with Hexagonal Architecture, OpenAPI, and MS SQL Service Broker for credit card processing.
 
-- Automated internal approval processes using Microsoft Power Automate, Teams, Outlook, and SharePoint.
+- Automated an internal approval documents processes using Microsoft Power Automate integrating MS Teams, Outlook, and SharePoint.
 
 - Integrated third-party APIs for payment processors, EWallets, EChecks, and cryptocurrencies.
 
