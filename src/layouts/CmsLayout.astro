@@ -1,0 +1,238 @@
+---
+interface Props {
+    title?: string
+    activeSection?: string
+    fullWidth?: boolean
+}
+const { title = 'CRM', activeSection = '', fullWidth = false } = Astro.props
+
+const nav = [
+{ id: 'dashboard', label: 'Dashboard', icon: '▦', href: '/cms' },
+    { id: 'resume', label: 'Resume Editor', icon: '✏️', href: '/cms/resume' },
+    { id: 'sections', label: 'Sections Visibility', icon: '👁️', href: '/cms/sections' },
+    { id: 'visits', label: 'Analytics', icon: '📊', href: '/cms/visits' },
+    ]
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{title} — CRM</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="crm-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <div class="logo-dot"></div>
+                <span>Portfolio CRM</span>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            {nav.map(item => (
+                <a
+                    href={item.href}
+                    class={`nav-item ${activeSection === item.id ? 'active' : ''}`}
+                >
+                    <span class="nav-icon">{item.icon}</span>
+                    <span class="nav-label">{item.label}</span>
+                </a>
+            ))}
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="/" target="_blank" class="sidebar-link">← Portfolio</a>
+            <a href="/resume" target="_blank" class="sidebar-link">← Resume</a>
+            <button id="logout-btn" class="logout-btn">Sign out</button>
+            <!-- logout redirects to /cms/login -->
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="crm-main">
+        <div class={fullWidth ? 'crm-content-full' : 'crm-content'}>
+            <slot />
+        </div>
+    </main>
+</div>
+
+<script>
+    document.getElementById('logout-btn')?.addEventListener('click', async () => {
+        await fetch('/api/auth/logout', { method: 'POST' })
+        window.location.href = '/cms/login'
+    })
+</script>
+
+<style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+        --bg: #080c14;
+        --bg2: #0d1220;
+        --bg3: #111827;
+        --cyan: #00e5ff;
+        --cyan-dim: rgba(0,229,255,0.08);
+        --border: rgba(0,229,255,0.12);
+        --border2: rgba(255,255,255,0.06);
+        --white: #f0f4ff;
+        --muted: #8892a4;
+        --font-body: 'DM Sans', sans-serif;
+        --font-mono: 'JetBrains Mono', monospace;
+        --sidebar-w: 240px;
+    }
+
+    html, body { height: 100%; }
+
+    body {
+        background: var(--bg);
+        color: var(--white);
+        font-family: var(--font-body);
+        min-height: 100%;
+    }
+
+    .crm-layout {
+        display: grid;
+        grid-template-columns: var(--sidebar-w) 1fr;
+        height: 100%;
+        min-height: 100vh;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+        background: var(--bg2);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        top: 0; left: 0; bottom: 0;
+        width: var(--sidebar-w);
+        overflow-y: auto;
+        z-index: 50;
+    }
+
+    .sidebar-header {
+        padding: 1.5rem 1.25rem 1rem;
+        border-bottom: 1px solid var(--border2);
+    }
+
+    .sidebar-logo {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        font-family: var(--font-mono);
+        font-size: 0.8rem;
+        color: var(--muted);
+    }
+
+    .logo-dot {
+        width: 8px; height: 8px;
+        border-radius: 50%;
+        background: var(--cyan);
+        box-shadow: 0 0 8px var(--cyan);
+        flex-shrink: 0;
+    }
+
+    .sidebar-nav {
+        flex: 1;
+        padding: 0.75rem 0.75rem;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.6rem 0.75rem;
+        border-radius: 6px;
+        text-decoration: none;
+        color: var(--muted);
+        font-size: 0.85rem;
+        transition: background 0.15s, color 0.15s;
+        cursor: pointer;
+    }
+
+    .nav-item:hover { background: var(--bg3); color: var(--white); }
+    .nav-item.active { background: var(--cyan-dim); color: var(--cyan); border: 1px solid var(--border); }
+
+    .nav-icon { font-size: 0.9rem; width: 1.2rem; text-align: center; }
+    .nav-label { font-size: 0.82rem; }
+
+    .sidebar-footer {
+        padding: 1rem 1rem;
+        border-top: 1px solid var(--border2);
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+    }
+
+    .sidebar-link {
+        font-size: 0.78rem;
+        color: var(--muted);
+        text-decoration: none;
+        font-family: var(--font-mono);
+        transition: color 0.15s;
+        padding: 0.2rem 0;
+    }
+
+    .sidebar-link:hover { color: var(--cyan); }
+
+    .logout-btn {
+        background: none;
+        border: 1px solid rgba(255,95,87,0.3);
+        color: rgba(255,95,87,0.7);
+        border-radius: 6px;
+        padding: 0.5rem;
+        font-size: 0.8rem;
+        cursor: pointer;
+        font-family: var(--font-body);
+        margin-top: 0.25rem;
+        transition: border-color 0.2s, color 0.2s;
+    }
+
+    .logout-btn:hover { border-color: #ff5f57; color: #ff5f57; }
+
+    /* ── Main ── */
+    .crm-main {
+        margin-left: var(--sidebar-w);
+        min-height: 100vh;
+        height: 100%;
+        width: calc(100% - var(--sidebar-w));
+        min-width: 0;
+    }
+
+    /* Full width: lock height to viewport */
+    .crm-layout:has(.crm-content-full) .crm-main {
+        height: 100vh;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .crm-content {
+        padding: 2rem 2.5rem;
+        max-width: 1000px;
+    }
+
+    /* Full width mode for split-view editors */
+    .crm-content-full {
+        height: 100vh;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+        width: 100%;
+        min-width: 0;
+    }
+</style>
+
+</body>
+</html>

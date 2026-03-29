@@ -1,61 +1,42 @@
 ---
 import { Icon } from 'astro-icon/components'
-import RenderMarkdown from '@/components/RenderMarkdown.astro'
-import { getProjects } from '@/data/projects'
+import { getProjectsDB } from '@/lib/profile'
+import { getTranslations, type Locale } from '@/i18n'
+import { markdownInline } from '@/lib/markdown'
 
-const projects = await getProjects()
+interface Props { locale: Locale }
+const { locale } = Astro.props
+const t = getTranslations(locale)
+const projects = await getProjectsDB(locale)
 ---
 
 <section id="projects" data-item-count={projects.length}>
     <div class="section-title">
-        <h2>Projects</h2>
+        <h2>{t.sections.projects}</h2>
         <Icon name="ri:open-source-fill" />
     </div>
 
     <div class="projects">
-        {projects.map(({ slug, data: { name, icons } }) => (
+        {projects.map(({ name, bullets }) => (
             <article>
                 <div class="title">
                     <h3>{name}</h3>
-                    {/* {icons?.length && (
-                        <div class="icons">
-                            <Icon name="ri:arrow-drop-left-line" />
-                            {icons.map(icon => (
-                                <Icon name={icon} />
-                            ))}
-                            <Icon name="ri:arrow-drop-right-line" />
-                        </div>
-                    )} */}
                 </div>
-                <div class="description">
-                    <RenderMarkdown type="projects" slug={slug} />
-                </div>
+                {bullets?.length > 0 && (
+                    <ul>
+                        {bullets.map((b: string) => <li set:html={markdownInline(b)} />)}
+                    </ul>
+                )}
             </article>
         ))}
     </div>
 </section>
 
 <style>
-    .title {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 2ch;
-    }
-
-    /* .icons {
-        display: flex;
-        align-items: center;
-        gap: 0.5ch;
-        font-size: 1.25em;
-    } */
-
-    .description {
-    }
+    .title { display: flex; justify-content: space-between; align-items: center; gap: 2ch; }
+    ul { margin: 0.25rem 0 0.5rem; padding-left: 1.25rem; }
 </style>
 
 <style is:global>
-    body.hide-projects #projects {
-        display: none;
-    }
+    body.hide-projects #projects { display: none; }
 </style>

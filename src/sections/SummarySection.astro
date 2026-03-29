@@ -1,24 +1,16 @@
 ---
 import { Icon } from 'astro-icon/components'
-import RenderMarkdown from '@/components/RenderMarkdown.astro'
-import { getMySelf } from '@/data/myself'
-import { stripProtocol } from '@/util'
+import { getPersonal } from '@/lib/profile'
+import type { Locale } from '@/i18n'
 
-const {
-	name,
-    // title,
-    email,
-    phone,
-    linkedin,
-    github,
-    //website,
-    // location,
-} = await getMySelf()
+interface Props { locale: Locale }
+const { locale } = Astro.props
+
+const { name, email, phone, linkedin, github, bio, bioHtml } = await getPersonal(locale)
 ---
 
 <section id="summary">
     <h1 class="personal full-name">{name}</h1>
-    <!-- <b>{title}</b> -->
 
     <div class="contacts">
         <div>
@@ -29,7 +21,6 @@ const {
         <div>
             <Icon name="ri:phone-fill" class="text-primary" />
             <span class="personal">{phone}</span>
-            <!-- <a href={`tel:${phone}`}>{phone}</a> -->
         </div>
         |
         <div>
@@ -40,24 +31,15 @@ const {
         <div>
             <Icon name="ri:mail-send-fill" class="text-primary" />
             <span class="personal">{email}</span>
-            <!-- <a href={`mailto:${email}`}>{email}</a> -->
         </div>
-        <!-- |
-        <div>
-            <Icon name="ri:computer-line" class="text-primary" />
-            <a href={website} class="personal">{stripProtocol(website)}</a>
-        </div> -->
-        <!-- | -->
-        <!-- <div>
-            <Icon name="ri:map-pin-2-fill" class="text-primary" />
-            <span class="personal">{location}</span>
-        </div> -->
     </div>
 
     <div class="summary-text">
-        <RenderMarkdown type="myself" slug="myself" />
+        {bioHtml && <Fragment set:html={bioHtml} />}
+        <p>{bio}</p>
     </div>
 </section>
+
 <style>
     #summary {
         display: flex;
@@ -93,9 +75,8 @@ const {
         & .summary-text {
             display: none;
         }
-
         & .contacts {
-            border-bottom: 0;ot
+            border-bottom: 0;
         }
     }
 </style>

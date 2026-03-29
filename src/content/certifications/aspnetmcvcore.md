@@ -5,4 +5,4 @@ website: https://www.linkedin.com/learning/certificates/d6a8e1936a0ff5520207c0c2
 year: 2024
 ---
 
-- Top Skill cover **ASP.NET Core**, **ASP.NET MVC**.
+<!-- - Top Skill cover **ASP.NET Core**, **ASP.NET MVC**. -->

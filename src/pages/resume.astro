@@ -8,22 +8,22 @@ import ExperienceSection from '@/sections/ExperienceSection.astro'
 import ProjectsSection from '@/sections/ProjectsSection.astro'
 import AwardsSection from '@/sections/AwardsSection.astro'
 import CertificationsSection from '@/sections/CertificationsSection.astro'
+import LangToggle from '@/components/LangToggle.astro'
+import { getLocaleFromCookie, type Locale } from '@/i18n'
+
+const cookieHeader = Astro.request.headers.get('cookie')
+const locale: Locale = getLocaleFromCookie(cookieHeader)
 ---
 
-<Layout>
-	<SummarySection />
+<Layout pageClass="resume-page" title="Resume">
+    <LangToggle locale={locale} />
 
-	<SkillsSection />
-
-	<ExperienceSection />
-	
-	<EducationSection />
-
-	<ProjectsSection />
-
-	<CertificationsSection />
-
-	<AwardsSection />
-
-	<ReferencesSection />
+    <SummarySection locale={locale} />
+    <SkillsSection locale={locale} />
+    <ExperienceSection locale={locale} />
+    <EducationSection locale={locale} />
+    <ProjectsSection locale={locale} />
+    <CertificationsSection locale={locale} />
+    <AwardsSection locale={locale} />
+    <ReferencesSection locale={locale} />
 </Layout>

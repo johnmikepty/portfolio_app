@@ -1,0 +1,254 @@
+---
+import { isAuthenticated } from '@/lib/auth'
+
+// Si ya está autenticado, redirigir al CRM
+const cookieHeader = Astro.request.headers.get('cookie')
+if (await isAuthenticated(cookieHeader)) {
+return Astro.redirect('/cms')
+}
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CRM Login</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="login-wrap">
+    <div class="login-card">
+        <div class="login-logo">
+            <div class="logo-dot"></div>
+            <span>Portfolio CRM</span>
+        </div>
+
+        <h1>Admin Access</h1>
+        <p class="subtitle">Sign in to manage your portfolio content.</p>
+
+        <form id="login-form">
+            <div class="field">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" autocomplete="email" required placeholder="admin@email.com" />
+            </div>
+            <div class="field">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" autocomplete="current-password" required placeholder="••••••••" />
+            </div>
+
+            <div id="error-msg" class="error" hidden></div>
+
+            <button type="submit" id="submit-btn">
+                <span id="btn-text">Sign In</span>
+                <span id="btn-loader" hidden>Signing in...</span>
+            </button>
+        </form>
+    </div>
+
+    <div class="login-bg">
+        <div class="bg-glow"></div>
+    </div>
+</div>
+
+<script>
+    const form = document.getElementById('login-form') as HTMLFormElement
+    const errorMsg = document.getElementById('error-msg') as HTMLDivElement
+    const btnText = document.getElementById('btn-text') as HTMLSpanElement
+    const btnLoader = document.getElementById('btn-loader') as HTMLSpanElement
+    const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault()
+        errorMsg.hidden = true
+        btnText.hidden = true
+        btnLoader.hidden = false
+        submitBtn.disabled = true
+
+        const email = (document.getElementById('email') as HTMLInputElement).value
+        const password = (document.getElementById('password') as HTMLInputElement).value
+
+        try {
+            const res = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+            })
+
+            const data = await res.json()
+
+            if (res.ok) {
+                window.location.href = '/cms'
+            } else {
+                errorMsg.textContent = data.error ?? 'Login failed'
+                errorMsg.hidden = false
+            }
+        } catch {
+            errorMsg.textContent = 'Network error. Please try again.'
+            errorMsg.hidden = false
+        } finally {
+            btnText.hidden = false
+            btnLoader.hidden = true
+            submitBtn.disabled = false
+        }
+    })
+</script>
+
+<style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+        --bg: #080c14;
+        --bg2: #0d1220;
+        --cyan: #00e5ff;
+        --border: rgba(0,229,255,0.15);
+        --white: #f0f4ff;
+        --muted: #8892a4;
+        --error: #ff5f57;
+        --font-body: 'DM Sans', sans-serif;
+        --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    body {
+        background: var(--bg);
+        color: var(--white);
+        font-family: var(--font-body);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .login-wrap {
+        position: relative;
+        width: 100%;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+    }
+
+    .login-bg {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    .bg-glow {
+        position: absolute;
+        top: 30%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(0,229,255,0.05) 0%, transparent 70%);
+    }
+
+    .login-card {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        max-width: 400px;
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 2.5rem;
+    }
+
+    .login-logo {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        margin-bottom: 2rem;
+        font-family: var(--font-mono);
+        font-size: 0.85rem;
+        color: var(--muted);
+    }
+
+    .logo-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--cyan);
+        box-shadow: 0 0 8px var(--cyan);
+    }
+
+    h1 {
+        font-size: 1.5rem;
+        font-weight: 500;
+        margin-bottom: 0.4rem;
+        color: var(--white);
+    }
+
+    .subtitle {
+        font-size: 0.875rem;
+        color: var(--muted);
+        margin-bottom: 2rem;
+    }
+
+    .field {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+        margin-bottom: 1.25rem;
+    }
+
+    label {
+        font-size: 0.75rem;
+        font-family: var(--font-mono);
+        color: var(--muted);
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+    }
+
+    input {
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 6px;
+        padding: 0.75rem 1rem;
+        color: var(--white);
+        font-family: var(--font-body);
+        font-size: 0.9rem;
+        transition: border-color 0.2s;
+        outline: none;
+        width: 100%;
+    }
+
+    input::placeholder { color: rgba(255,255,255,0.2); }
+    input:focus { border-color: var(--cyan); }
+
+    .error {
+        background: rgba(255,95,87,0.1);
+        border: 1px solid rgba(255,95,87,0.3);
+        color: var(--error);
+        padding: 0.6rem 0.9rem;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        margin-bottom: 1rem;
+    }
+
+    button[type="submit"] {
+        width: 100%;
+        background: var(--cyan);
+        color: var(--bg);
+        border: none;
+        border-radius: 6px;
+        padding: 0.85rem;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: opacity 0.2s;
+        margin-top: 0.5rem;
+        font-family: var(--font-body);
+    }
+
+    button[type="submit"]:hover:not(:disabled) { opacity: 0.85; }
+    button[type="submit"]:disabled { opacity: 0.5; cursor: not-allowed; }
+</style>
+
+</body>
+</html>

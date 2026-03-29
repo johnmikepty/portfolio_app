@@ -1,0 +1,15 @@
+{
+  "sections": {
+    "skills": "Skills",
+    "experience": "Experience",
+    "education": "Education",
+    "projects": "Projects",
+    "certifications": "Certifications",
+    "awards": "Awards",
+    "references": "References"
+  },
+  "ui": {
+    "present": "Present",
+    "at": "at"
+  }
+}

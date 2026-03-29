@@ -1,0 +1,172 @@
+---
+import CmsLayout from '@/layouts/CmsLayout.astro'
+import { connectDB } from '@/lib/mongodb'
+import { Visit } from '@/lib/models/Visit'
+import { getPersonal } from '@/lib/profile'
+
+await connectDB()
+
+const today = new Date(); today.setHours(0,0,0,0)
+const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+
+const [visitsToday, visitsWeek, downloads, personal] = await Promise.all([
+    Visit.countDocuments({ timestamp: { $gte: today } }),
+    Visit.countDocuments({ timestamp: { $gte: weekAgo } }),
+    Visit.countDocuments({ action: 'download' }),
+    getPersonal('en'),
+])
+---
+
+<CmsLayout title="Dashboard" activeSection="dashboard">
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Dashboard</h1>
+            <p class="page-sub">Welcome back. Here's your portfolio at a glance.</p>
+        </div>
+        <div class="header-links">
+            <a href="/" target="_blank" class="preview-link">↗ Portfolio</a>
+            <a href="/resume" target="_blank" class="preview-link">↗ Resume</a>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-label">Visits Today</div>
+            <div class="stat-value">{visitsToday}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Visits This Week</div>
+            <div class="stat-value">{visitsWeek}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Resume Downloads</div>
+            <div class="stat-value">{downloads}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Profile Name</div>
+            <div class="stat-value stat-name">{personal.name}</div>
+        </div>
+    </div>
+
+    <div class="quick-actions">
+        <h2 class="section-title">Quick Edit</h2>
+        <div class="actions-grid">
+            {[
+                { href: '/cms/resume', icon: '✏️', label: 'Resume Editor', desc: 'Edit all resume content' },
+                { href: '/cms/sections', icon: '👁️', label: 'Sections', desc: 'Show/hide sections' },
+                { href: '/cms/visits', icon: '📊', label: 'Analytics', desc: 'Visit tracking' },
+            ].map(a => (
+                <a href={a.href} class="action-card">
+                    <span class="action-icon">{a.icon}</span>
+                    <div>
+                        <div class="action-label">{a.label}</div>
+                        <div class="action-desc">{a.desc}</div>
+                    </div>
+                </a>
+            ))}
+        </div>
+    </div>
+</CmsLayout>
+
+<style>
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .page-title {
+        font-size: 1.5rem;
+        font-weight: 500;
+        color: #f0f4ff;
+        margin-bottom: 0.25rem;
+    }
+
+    .page-sub { font-size: 0.85rem; color: #8892a4; }
+
+    .header-links { display: flex; gap: 0.75rem; align-items: center; }
+
+    .preview-link {
+        font-size: 0.8rem;
+        color: #00e5ff;
+        text-decoration: none;
+        border: 1px solid rgba(0,229,255,0.2);
+        padding: 0.35rem 0.75rem;
+        border-radius: 4px;
+        transition: background 0.2s;
+        font-family: 'JetBrains Mono', monospace;
+    }
+
+    .preview-link:hover { background: rgba(0,229,255,0.08); }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .stat-card {
+        background: #0d1220;
+        border: 1px solid rgba(0,229,255,0.12);
+        border-radius: 8px;
+        padding: 1.25rem;
+    }
+
+    .stat-label {
+        font-size: 0.72rem;
+        color: #8892a4;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-family: 'JetBrains Mono', monospace;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 600;
+        color: #00e5ff;
+        line-height: 1;
+    }
+
+    .stat-name { font-size: 1rem; color: #f0f4ff; }
+
+    .section-title {
+        font-size: 0.85rem;
+        color: #8892a4;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-family: 'JetBrains Mono', monospace;
+        margin-bottom: 1rem;
+    }
+
+    .actions-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.75rem;
+    }
+
+    .action-card {
+        display: flex;
+        align-items: center;
+        gap: 0.85rem;
+        background: #0d1220;
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 8px;
+        padding: 1rem 1.25rem;
+        text-decoration: none;
+        transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .action-card:hover {
+        border-color: rgba(0,229,255,0.3);
+        transform: translateY(-2px);
+    }
+
+    .action-icon { font-size: 1.4rem; }
+    .action-label { font-size: 0.875rem; color: #f0f4ff; font-weight: 500; }
+    .action-desc { font-size: 0.75rem; color: #8892a4; margin-top: 0.1rem; }
+</style>

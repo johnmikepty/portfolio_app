@@ -51,10 +51,10 @@ export function properCase(text: string) : string {
  * @returns A date string in the form Month YYYY or 'Present' if year or month aren't provided.
  * @example getDisplayDate(2024, 5) // -> 'May 2024'
  */
-export function getDisplayDate(year?: number, month?: number) : string {
-    if (!year || !month) return 'Present'
+export function getDisplayDate(year?: number, month?: number, locale: string = 'en', presentLabel: string = 'Present') : string {
+    if (!year || !month) return presentLabel
 
-    return new Intl.DateTimeFormat('en', { month: 'long', year: 'numeric' }).format(new Date(year, month - 1))
+    return new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric' }).format(new Date(year, month - 1))
 }
 
 interface ISortableAstroContent {
