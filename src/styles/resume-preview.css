@@ -1,0 +1,121 @@
+/* ───────────────────────────────────────────────────────────
+   resume-preview.css  –  Shared resume preview styles
+   Used by BOTH the published /resume AND the CMS live preview.
+   Design tokens come from global.css :root variables.
+   ─────────────────────────────────────────────────────────── */
+
+/* ── Base container ─────────────────────────────────────── */
+.rv {
+    font-family: var(--font-family), 'Times New Roman', serif;
+    font-size: var(--font-size-body-copy, 10pt);
+    color: var(--col-fg, #000);
+    max-width: 8.5in;
+    margin: 0 auto;
+    line-height: var(--line-height, 130%);
+}
+.rv a { color: var(--col-link, rgb(66,120,214)); }
+
+/* ── Name ───────────────────────────────────────────────── */
+.rv-name {
+    font-size: var(--font-size-full-name, 22pt);
+    font-weight: var(--font-weight-full-name, 600);
+    color: var(--accent-color, #00786c);
+    text-align: var(--text-align-header, center);
+    margin-bottom: .1rem;
+    font-family: var(--font-family-page-title, serif);
+    line-height: 1.2;
+}
+
+/* ── Title ──────────────────────────────────────────────── */
+.rv-title {
+    font-size: var(--font-size-body-copy, 10pt);
+    font-weight: var(--font-weight-heading-primary, 600);
+    color: var(--accent-color, #00786c);
+    text-align: var(--text-align-header, center);
+    margin-bottom: .2rem;
+}
+
+/* ── Contacts bar ───────────────────────────────────────── */
+.rv-contacts {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: .5em;
+    font-size: var(--font-size-body-copy, 10pt);
+    color: var(--col-fg, #000);
+    border-bottom: var(--border-width-header-bottom, 1pt) solid var(--border-color-header, #000);
+    padding-bottom: .5rem;
+    margin-bottom: .25rem;
+    align-items: baseline;
+}
+.rv-contacts a { color: var(--col-link, rgb(66,120,214)); }
+.rv-contacts .fa { color: var(--accent-color, #00786c); margin-right: 2px; }
+
+/* ── Bio / summary ──────────────────────────────────────── */
+.rv-bio {
+    font-size: var(--font-size-body-copy, 10pt);
+    text-align: justify;
+    line-height: var(--line-height, 130%);
+    color: var(--col-fg, #000);
+    margin-bottom: .1rem;
+}
+
+/* ── Section ────────────────────────────────────────────── */
+.rv-section { margin-top: .6rem; }
+.rv-section h2 {
+    font-size: var(--font-size-section-title, 10pt);
+    text-transform: var(--text-transform-section-title, uppercase);
+    letter-spacing: var(--letter-spacing-section-title, 0);
+    color: var(--accent-color, #00786c);
+    margin-top: .25em;
+    margin-bottom: .3rem;
+    font-family: var(--font-family), 'Times New Roman', serif;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1ch;
+    border-bottom: var(--border-width-section-title, 1pt) solid var(--border-color-header, #000);
+    padding-bottom: 2px;
+}
+.rv-section h2 .sec-icon-right {
+    font-size: 1.5em;
+    color: rgba(0,0,0,.65);
+}
+
+/* ── Items (experience, education, etc.) ────────────────── */
+.rv-item { margin-bottom: .45rem; }
+.rv-row {
+    display: flex;
+    align-items: baseline;
+    gap: 1ch;
+    flex-wrap: wrap;
+    margin-bottom: .1rem;
+}
+
+/* ── Role / job title ───────────────────────────────────── */
+.rv-role {
+    font-size: var(--font-size-entry-title, 11pt);
+    font-weight: var(--font-weight-heading-primary, 600);
+    color: var(--accent-color, #00786c);
+}
+
+/* ── Dash, company, location, date ──────────────────────── */
+.rv-dash { color: var(--col-fg, #000); font-size: var(--font-size-body-copy, 10pt); }
+.rv-company { font-size: var(--font-size-body-copy, 10pt); font-weight: bold; }
+.rv-location { font-style: italic; font-size: var(--font-size-body-copy, 10pt); }
+.rv-location .fa { vertical-align: top; }
+.rv-extlink { font-size: var(--font-size-small, 9pt); color: var(--col-link, rgb(66,120,214)); text-decoration: none; }
+.rv-date { margin-left: auto; font-size: var(--font-size-body-copy, 10pt); font-weight: bold; white-space: nowrap; }
+
+/* ── Lists, paragraphs, strong ──────────────────────────── */
+.rv ul { padding-left: 1.25rem; margin: .25rem 0 1rem; }
+.rv li { font-size: var(--font-size-body-copy, 10pt); margin-bottom: .08rem; line-height: var(--line-height-list-item, 130%); }
+.rv p  { font-size: var(--font-size-body-copy, 10pt); margin-bottom: .2rem; line-height: var(--line-height, 130%); }
+.rv strong { font-weight: bold; }
+
+/* ── References ─────────────────────────────────────────── */
+.rv-ref-detail { font-size: var(--font-size-body-copy, 10pt); }
+
+/* ── Utilities ──────────────────────────────────────────── */
+.rv .grow { flex-grow: 1; }
