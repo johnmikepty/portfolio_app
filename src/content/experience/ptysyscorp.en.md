@@ -1,6 +1,6 @@
 ---
-name: PTY SYS CORP - Atlantic Security Bank (ASB) 
-url: https://www.asbnet.com/Paginas/default.aspx
+name: Global Bank Corp
+url: https://example.com
 title: Senior Consultant Development
 location: On Site
 startMonth: 5
@@ -10,7 +10,5 @@ endYear: 2016
 ---
 
 - Updated and maintained financial applications (ASP.NET, C#, MSSQL).
-
 - Enhanced core banking modules and BizAgi workflows for investment operations and tariff validation.
-
 - Delivered reliable MSSQL reports and batch jobs with comprehensive testing.

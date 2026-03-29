@@ -1,0 +1,457 @@
+---
+import { isAuthenticated } from '@/lib/auth'
+import { connectDB } from '@/lib/mongodb'
+import { Personal } from '@/lib/models/Personal'
+import { Experience } from '@/lib/models/Experience'
+import { Education } from '@/lib/models/Education'
+import { Project } from '@/lib/models/Project'
+import { Certification } from '@/lib/models/Certification'
+import { Award } from '@/lib/models/Award'
+import { Reference } from '@/lib/models/Reference'
+import { SkillSection } from '@/lib/models/SkillSection'
+
+const cookieHeader = Astro.request.headers.get('cookie')
+if (!await isAuthenticated(cookieHeader)) {
+    return Astro.redirect('/cms/login')
+}
+
+await connectDB()
+
+const [personal_en, personal_es, experience_en, experience_es, education_en, education_es,
+       projects_en, projects_es, certs, awards_en, awards_es, refs, skills] = await Promise.all([
+    Personal.findOne({ locale: 'en' }).lean(),
+    Personal.findOne({ locale: 'es' }).lean(),
+    Experience.find({ locale: 'en' }).sort({ startYear: -1, startMonth: -1 }).lean(),
+    Experience.find({ locale: 'es' }).sort({ startYear: -1, startMonth: -1 }).lean(),
+    Education.find({ locale: 'en' }).sort({ year: -1 }).lean(),
+    Education.find({ locale: 'es' }).sort({ year: -1 }).lean(),
+    Project.find({ locale: 'en' }).sort({ priority: -1 }).lean(),
+    Project.find({ locale: 'es' }).sort({ priority: -1 }).lean(),
+    Certification.find().sort({ year: -1 }).lean(),
+    Award.find({ locale: 'en' }).lean(),
+    Award.find({ locale: 'es' }).lean(),
+    Reference.find().sort({ priority: 1 }).lean(),
+    SkillSection.find().sort({ priority: 1 }).lean(),
+])
+
+const initialData = {
+    en: { personal: personal_en, experience: experience_en, education: education_en, projects: projects_en, certifications: certs, awards: awards_en, references: refs, skills },
+    es: { personal: personal_es, experience: experience_es, education: education_es, projects: projects_es, certifications: certs, awards: awards_es, references: refs, skills },
+}
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Resume Editor — CMS</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080c14;--bg2:#0d1220;--bg3:#111827;
+  --cyan:#00e5ff;--cyan-dim:rgba(0,229,255,0.08);
+  --border:rgba(0,229,255,0.12);--border2:rgba(255,255,255,0.07);
+  --white:#f0f4ff;--muted:#8892a4;--error:#ff5f57;--success:#28c840;
+  --sidebar-w:200px;
+  --font-body:'DM Sans',sans-serif;--font-mono:'JetBrains Mono',monospace;
+}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--white);font-family:var(--font-body);font-size:14px;}
+.app{display:grid;grid-template-columns:var(--sidebar-w) 1fr;height:100vh;overflow:hidden;}
+.sidebar{background:var(--bg2);border-right:1px solid var(--border2);display:flex;flex-direction:column;overflow:hidden;}
+.sidebar-logo{display:flex;align-items:center;gap:.5rem;padding:1rem;border-bottom:1px solid var(--border2);font-family:var(--font-mono);font-size:.72rem;color:var(--muted);}
+.logo-dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 6px var(--cyan);flex-shrink:0;}
+.sidebar-nav{flex:1;overflow-y:auto;padding:.5rem;display:flex;flex-direction:column;gap:2px;}
+.nav-item{display:flex;align-items:center;gap:.5rem;padding:.5rem .6rem;border-radius:5px;text-decoration:none;color:var(--muted);font-size:.8rem;transition:background .15s,color .15s;}
+.nav-item:hover{background:var(--bg3);color:var(--white);}
+.nav-item.active{background:var(--cyan-dim);color:var(--cyan);}
+.sidebar-footer{padding:.75rem;border-top:1px solid var(--border2);display:flex;flex-direction:column;gap:.35rem;}
+.sidebar-link{font-size:.72rem;color:var(--muted);text-decoration:none;font-family:var(--font-mono);transition:color .15s;padding:.15rem 0;}
+.sidebar-link:hover{color:var(--cyan);}
+.logout-btn{background:none;border:1px solid rgba(255,95,87,.3);color:rgba(255,95,87,.7);border-radius:5px;padding:.4rem;font-size:.75rem;cursor:pointer;font-family:var(--font-body);margin-top:.1rem;transition:border-color .2s,color .2s;width:100%;}
+.logout-btn:hover{border-color:#ff5f57;color:#ff5f57;}
+.main{display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:.6rem 1rem;background:var(--bg2);border-bottom:1px solid var(--border2);flex-shrink:0;gap:1rem;}
+.topbar-left{display:flex;align-items:center;gap:1rem;}
+.topbar-right{display:flex;align-items:center;gap:.75rem;}
+.topbar-title{font-size:.875rem;font-weight:500;color:var(--white);}
+.lang-switch{display:flex;gap:2px;background:var(--bg3);border-radius:5px;padding:2px;}
+.lang-btn{background:none;border:none;color:var(--muted);padding:.25rem .65rem;border-radius:4px;cursor:pointer;font-size:.75rem;font-family:var(--font-body);transition:background .15s,color .15s;}
+.lang-btn.active{background:var(--cyan);color:var(--bg);font-weight:500;}
+.unsaved-badge{font-size:.72rem;color:#f59e0b;font-family:var(--font-mono);}
+.open-resume-btn{font-size:.72rem;color:var(--cyan);text-decoration:none;border:1px solid var(--border);padding:.25rem .65rem;border-radius:4px;font-family:var(--font-mono);transition:background .2s;}
+.open-resume-btn:hover{background:var(--cyan-dim);}
+.split{display:grid;grid-template-columns:400px 1fr;flex:1;overflow:hidden;min-height:0;}
+.editor-panel{border-right:1px solid var(--border2);overflow-y:auto;background:var(--bg2);}
+.sec{border-bottom:1px solid var(--border2);}
+.sec-head{display:flex;align-items:center;justify-content:space-between;padding:.65rem .85rem;cursor:pointer;user-select:none;transition:background .12s;}
+.sec-head:hover{background:rgba(255,255,255,.02);}
+.sec-head-left{display:flex;align-items:center;gap:.4rem;}
+.chevron{color:var(--muted);font-style:normal;font-size:.8rem;width:.9rem;}
+.sec-icon{font-size:.85rem;}
+.sec-name{font-size:.82rem;color:var(--white);}
+.sec-actions{display:flex;gap:.3rem;}
+.save-btn{background:var(--cyan);color:var(--bg);border:none;border-radius:3px;padding:.2rem .55rem;font-size:.7rem;font-weight:600;cursor:pointer;font-family:var(--font-body);transition:opacity .2s;}
+.save-btn:hover:not(:disabled){opacity:.85;}
+.save-btn:disabled{opacity:.5;cursor:not-allowed;}
+.add-btn{background:none;border:1px solid var(--border);color:var(--muted);border-radius:3px;padding:.2rem .5rem;font-size:.7rem;cursor:pointer;font-family:var(--font-body);transition:border-color .2s,color .2s;}
+.add-btn:hover{border-color:var(--cyan);color:var(--cyan);}
+.sec-body{display:none;}
+.sec.open .sec-body{display:block;}
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;padding:.6rem .85rem;}
+.field{display:flex;flex-direction:column;gap:.2rem;}
+.field.full{grid-column:1/-1;}
+label{font-size:.65rem;color:var(--muted);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.04em;}
+input,textarea{background:rgba(255,255,255,.04);border:1px solid var(--border2);border-radius:3px;padding:.35rem .5rem;color:var(--white);font-family:var(--font-body);font-size:.8rem;outline:none;transition:border-color .2s;width:100%;resize:vertical;}
+input:focus,textarea:focus{border-color:var(--cyan);}
+input::placeholder,textarea::placeholder{color:rgba(255,255,255,.2);}
+.list-item{border-top:1px solid var(--border2);}
+.item-head{display:flex;align-items:center;justify-content:space-between;padding:.4rem .85rem;background:rgba(255,255,255,.015);}
+.item-title{font-size:.75rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:280px;}
+.remove-btn{background:none;border:none;color:rgba(255,95,87,.4);cursor:pointer;font-size:.75rem;padding:.1rem .25rem;flex-shrink:0;transition:color .2s;}
+.remove-btn:hover{color:var(--error);}
+.preview-panel{background:#f8f8f8;overflow-y:auto;display:flex;flex-direction:column;}
+.preview-bar{display:flex;align-items:center;justify-content:space-between;padding:.4rem .85rem;background:#ebebeb;border-bottom:1px solid #ddd;position:sticky;top:0;z-index:10;flex-shrink:0;}
+.preview-label{font-size:.68rem;color:#777;font-family:monospace;}
+.locale-badge{font-size:.65rem;background:#00786c;color:white;padding:.1rem .45rem;border-radius:999px;font-family:monospace;font-weight:bold;}
+.preview-content{padding:1rem 1.25rem 3rem;flex:1;}
+.rv{font-family:'Times New Roman',serif;font-size:10pt;color:#111;max-width:7in;margin:0 auto;}
+.rv-name{font-size:18pt;font-weight:bold;color:#00786c;text-align:center;margin-bottom:.2rem;}
+.rv-contacts{display:flex;justify-content:center;flex-wrap:wrap;gap:.3rem .75rem;font-size:8.5pt;color:#444;margin-bottom:.4rem;}
+.rv-contacts span::before{content:'•';margin-right:.3rem;color:#999;}
+.rv-contacts span:first-child::before{content:'';margin:0;}
+.rv-bio{font-size:9pt;text-align:justify;line-height:1.5;color:#222;border-top:1px solid #ccc;padding-top:.4rem;margin-bottom:.1rem;}
+.rv-section{margin-top:.6rem;}
+.rv-section h2{font-size:9.5pt;text-transform:uppercase;letter-spacing:.08em;color:#00786c;border-bottom:1px solid #00786c;padding-bottom:1px;margin-bottom:.3rem;font-family:'Times New Roman',serif;}
+.rv-item{margin-bottom:.45rem;}
+.rv-row{display:flex;align-items:baseline;gap:.3rem;flex-wrap:wrap;margin-bottom:.1rem;}
+.rv-role{font-size:9.5pt;font-weight:bold;}
+.rv-dash{color:#888;font-size:9pt;}
+.rv-company{font-size:9.5pt;}
+.rv-date{margin-left:auto;font-size:8.5pt;color:#555;white-space:nowrap;}
+.rv ul{padding-left:1.1rem;margin:.15rem 0;}
+.rv li{font-size:9pt;margin-bottom:.08rem;line-height:1.45;}
+.rv p{font-size:9pt;margin-bottom:.2rem;line-height:1.4;}
+.rv strong{font-weight:bold;}
+.toast{position:fixed;bottom:1.25rem;right:1.25rem;z-index:9999;padding:.5rem 1rem;border-radius:5px;font-size:.8rem;font-family:var(--font-mono);display:none;}
+.toast.show{display:block;}
+.toast.success{background:#0d2a1a;color:var(--success);border:1px solid var(--success);}
+.toast.error{background:#2a0d0d;color:var(--error);border:1px solid var(--error);}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div class="logo-dot"></div>Portfolio CMS</div>
+    <nav class="sidebar-nav">
+      <a href="/cms" class="nav-item">▦ Dashboard</a>
+      <a href="/cms/resume" class="nav-item active">✏️ Resume Editor</a>
+      <a href="/cms/sections" class="nav-item">👁 Sections</a>
+      <a href="/cms/visits" class="nav-item">📊 Analytics</a>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="/" target="_blank" class="sidebar-link">← Portfolio</a>
+      <a href="/resume" target="_blank" class="sidebar-link">← Resume</a>
+      <button class="logout-btn" id="logout-btn">Sign out</button>
+    </div>
+  </aside>
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <span class="topbar-title">Resume Editor</span>
+        <div class="lang-switch">
+          <button class="lang-btn active" data-lang="en">🇺🇸 English</button>
+          <button class="lang-btn" data-lang="es">🇵🇦 Español</button>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <span class="unsaved-badge" id="unsaved-badge" style="display:none">● Unsaved changes</span>
+        <a href="/resume" target="_blank" class="open-resume-btn">↗ Open Resume</a>
+      </div>
+    </div>
+    <div class="split">
+      <div class="editor-panel">
+        <div class="sec" id="sec-personal">
+          <div class="sec-head" onclick="toggleSec('personal')">
+            <div class="sec-head-left"><i class="chevron" id="chev-personal">›</i><span class="sec-icon">👤</span><span class="sec-name">Contact Information</span></div>
+            <div class="sec-actions"><button class="save-btn" onclick="saveSection(event,'personal')">Save</button></div>
+          </div>
+          <div class="sec-body">
+            <div class="field-grid">
+              <div class="field"><label>Name</label><input data-f="personal.name" /></div>
+              <div class="field"><label>Title</label><input data-f="personal.title" /></div>
+              <div class="field"><label>Email</label><input data-f="personal.email" /></div>
+              <div class="field"><label>Phone</label><input data-f="personal.phone" /></div>
+              <div class="field"><label>LinkedIn</label><input data-f="personal.linkedin" /></div>
+              <div class="field"><label>GitHub</label><input data-f="personal.github" /></div>
+              <div class="field full"><label>Location</label><input data-f="personal.location" /></div>
+              <div class="field full"><label>Summary / Bio</label><textarea data-f="personal.bio" rows="4"></textarea></div>
+            </div>
+          </div>
+        </div>
+        <div class="sec" id="sec-experience">
+          <div class="sec-head" onclick="toggleSec('experience')">
+            <div class="sec-head-left"><i class="chevron" id="chev-experience">›</i><span class="sec-icon">💼</span><span class="sec-name">Work Experience</span></div>
+            <div class="sec-actions"><button class="add-btn" onclick="addItem(event,'experience')">+ Add</button><button class="save-btn" onclick="saveSection(event,'experience')">Save</button></div>
+          </div>
+          <div class="sec-body" id="list-experience"></div>
+        </div>
+        <div class="sec" id="sec-education">
+          <div class="sec-head" onclick="toggleSec('education')">
+            <div class="sec-head-left"><i class="chevron" id="chev-education">›</i><span class="sec-icon">🎓</span><span class="sec-name">Education</span></div>
+            <div class="sec-actions"><button class="add-btn" onclick="addItem(event,'education')">+ Add</button><button class="save-btn" onclick="saveSection(event,'education')">Save</button></div>
+          </div>
+          <div class="sec-body" id="list-education"></div>
+        </div>
+        <div class="sec" id="sec-skills">
+          <div class="sec-head" onclick="toggleSec('skills')">
+            <div class="sec-head-left"><i class="chevron" id="chev-skills">›</i><span class="sec-icon">🛠️</span><span class="sec-name">Skills & Interests</span></div>
+            <div class="sec-actions"><button class="add-btn" onclick="addItem(event,'skills')">+ Add</button><button class="save-btn" onclick="saveSection(event,'skills')">Save</button></div>
+          </div>
+          <div class="sec-body" id="list-skills"></div>
+        </div>
+        <div class="sec" id="sec-certifications">
+          <div class="sec-head" onclick="toggleSec('certifications')">
+            <div class="sec-head-left"><i class="chevron" id="chev-certifications">›</i><span class="sec-icon">📜</span><span class="sec-name">Certifications</span></div>
+            <div class="sec-actions"><button class="add-btn" onclick="addItem(event,'certifications')">+ Add</button><button class="save-btn" onclick="saveSection(event,'certifications')">Save</button></div>
+          </div>
+          <div class="sec-body" id="list-certifications"></div>
+        </div>
+        <div class="sec" id="sec-awards">
+          <div class="sec-head" onclick="toggleSec('awards')">
+            <div class="sec-head-left"><i class="chevron" id="chev-awards">›</i><span class="sec-icon">🏆</span><span class="sec-name">Awards & Scholarships</span></div>
+            <div class="sec-actions"><button class="add-btn" onclick="addItem(event,'awards')">+ Add</button><button class="save-btn" onclick="saveSection(event,'awards')">Save</button></div>
+          </div>
+          <div class="sec-body" id="list-awards"></div>
+        </div>
+        <div class="sec" id="sec-projects">
+          <div class="sec-head" onclick="toggleSec('projects')">
+            <div class="sec-head-left"><i class="chevron" id="chev-projects">›</i><span class="sec-icon">🚀</span><span class="sec-name">Projects</span></div>
+            <div class="sec-actions"><button class="add-btn" onclick="addItem(event,'projects')">+ Add</button><button class="save-btn" onclick="saveSection(event,'projects')">Save</button></div>
+          </div>
+          <div class="sec-body" id="list-projects"></div>
+        </div>
+        <div class="sec" id="sec-references">
+          <div class="sec-head" onclick="toggleSec('references')">
+            <div class="sec-head-left"><i class="chevron" id="chev-references">›</i><span class="sec-icon">👥</span><span class="sec-name">References</span></div>
+            <div class="sec-actions"><button class="add-btn" onclick="addItem(event,'references')">+ Add</button><button class="save-btn" onclick="saveSection(event,'references')">Save</button></div>
+          </div>
+          <div class="sec-body" id="list-references"></div>
+        </div>
+      </div>
+      <div class="preview-panel">
+        <div class="preview-bar">
+          <span class="preview-label">Live Preview</span>
+          <span class="locale-badge" id="locale-badge">EN</span>
+        </div>
+        <div class="preview-content" id="preview"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script define:vars={{ initialData }}>
+let locale='en',data=JSON.parse(JSON.stringify(initialData)),dirty=new Set()
+
+document.addEventListener('DOMContentLoaded',()=>{
+  loadPersonalFields();renderLists();renderPreview()
+  document.querySelectorAll('.lang-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      if(btn.dataset.lang===locale)return
+      if(dirty.size>0&&!confirm('Unsaved changes will be lost. Switch language?'))return
+      dirty.clear();updateBadge()
+      locale=btn.dataset.lang
+      document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.dataset.lang===locale))
+      document.getElementById('locale-badge').textContent=locale.toUpperCase()
+      loadPersonalFields();renderLists();renderPreview()
+    })
+  })
+  document.getElementById('logout-btn')?.addEventListener('click',async()=>{
+    await fetch('/api/auth/logout',{method:'POST'})
+    window.location.href='/cms/login'
+  })
+  window.addEventListener('beforeunload',e=>{if(dirty.size>0){e.preventDefault();e.returnValue=''}})
+})
+
+window.toggleSec=function(id){
+  const sec=document.getElementById('sec-'+id),chev=document.getElementById('chev-'+id)
+  sec.classList.toggle('open')
+  chev.textContent=sec.classList.contains('open')?'⌄':'›'
+}
+
+function markDirty(s){dirty.add(s);updateBadge();renderPreview()}
+function updateBadge(){document.getElementById('unsaved-badge').style.display=dirty.size>0?'inline':'none'}
+
+function loadPersonalFields(){
+  const p=data[locale].personal||{}
+  document.querySelectorAll('[data-f^="personal."]').forEach(el=>{
+    const key=el.dataset.f.replace('personal.','')
+    el.value=p[key]||''
+    const clone=el.cloneNode(true)
+    el.parentNode.replaceChild(clone,el)
+    clone.addEventListener('input',()=>{
+      if(!data[locale].personal)data[locale].personal={}
+      data[locale].personal[clone.dataset.f.replace('personal.','')]=clone.value
+      markDirty('personal')
+    })
+  })
+}
+
+function renderLists(){
+  renderExpList();renderEduList();renderSkillList()
+  renderCertList();renderAwardList();renderProjectList();renderRefList()
+}
+
+function mf(label,value,onchange,type='text',full=false){
+  return `<div class="field${full?' full':''}"><label>${label}</label><input type="${type}" value="${esc(value)}" onchange="${onchange}"/></div>`
+}
+function mta(label,value,onchange,rows=3,full=true){
+  return `<div class="field${full?' full':''}"><label>${label}</label><textarea rows="${rows}" onchange="${onchange}">${esc(value)}</textarea></div>`
+}
+function card(title,rm,fields){
+  return `<div class="list-item"><div class="item-head"><span class="item-title">${esc(title)}</span><button class="remove-btn" onclick="${rm}">✕</button></div><div class="field-grid">${fields}</div></div>`
+}
+
+function renderExpList(){
+  const items=data[locale].experience||[]
+  document.getElementById('list-experience').innerHTML=items.map((x,i)=>card(x.name||'New Job',`removeItem('experience',${i})`,
+    mf('Company',x.name,`updateF('experience',${i},'name',this.value)`)+
+    mf('Job Title',x.title,`updateF('experience',${i},'title',this.value)`)+
+    mf('URL',x.url,`updateF('experience',${i},'url',this.value)`)+
+    mf('Location',x.location,`updateF('experience',${i},'location',this.value)`)+
+    mf('Start Month',x.startMonth,`updateF('experience',${i},'startMonth',+this.value)`,'number')+
+    mf('Start Year',x.startYear,`updateF('experience',${i},'startYear',+this.value)`,'number')+
+    mf('End Month',x.endMonth||'',`updateF('experience',${i},'endMonth',this.value?+this.value:null)`,'number')+
+    mf('End Year',x.endYear||'',`updateF('experience',${i},'endYear',this.value?+this.value:null)`,'number')+
+    mta('Bullets (one per line, **bold**)',(x.bullets||[]).join('\n'),`updateBullets('experience',${i},this.value)`,4)
+  )).join('')
+}
+function renderEduList(){
+  const items=data[locale].education||[]
+  document.getElementById('list-education').innerHTML=items.map((x,i)=>card(x.name||'New School',`removeItem('education',${i})`,
+    mf('Institution',x.name,`updateF('education',${i},'name',this.value)`)+
+    mf('Degree',x.degree,`updateF('education',${i},'degree',this.value)`)+
+    mf('Subject',x.subject,`updateF('education',${i},'subject',this.value)`)+
+    mf('Year',x.year,`updateF('education',${i},'year',+this.value)`,'number')+
+    mta('Bullets',(x.bullets||[]).join('\n'),`updateBullets('education',${i},this.value)`,2)
+  )).join('')
+}
+function renderSkillList(){
+  const items=data[locale].skills||[]
+  document.getElementById('list-skills').innerHTML=items.map((x,i)=>card(x.title||'New Group',`removeItem('skills',${i})`,
+    mf('Category Title',x.title,`updateF('skills',${i},'title',this.value)`,'text',true)+
+    mta('Skills (comma separated)',(x.items||[]).join(', '),`updateSkillItems(${i},this.value)`,2)
+  )).join('')
+}
+window.updateSkillItems=function(i,val){data[locale].skills[i].items=val.split(',').map(s=>s.trim()).filter(Boolean);markDirty('skills')}
+function renderCertList(){
+  const items=data[locale].certifications||[]
+  document.getElementById('list-certifications').innerHTML=items.map((x,i)=>card(x.title||'New Cert',`removeItem('certifications',${i})`,
+    mf('Title',x.title,`updateF('certifications',${i},'title',this.value)`)+
+    mf('Institution',x.mentorship,`updateF('certifications',${i},'mentorship',this.value)`)+
+    mf('Year',x.year,`updateF('certifications',${i},'year',+this.value)`,'number')+
+    mf('URL',x.website,`updateF('certifications',${i},'website',this.value)`)
+  )).join('')
+}
+function renderAwardList(){
+  const items=data[locale].awards||[]
+  document.getElementById('list-awards').innerHTML=items.map((x,i)=>card(x.name||'New Award',`removeItem('awards',${i})`,
+    mf('Award Name',x.name,`updateF('awards',${i},'name',this.value)`,'text',true)+
+    mta('Description',(x.bullets||[]).join('\n'),`updateBullets('awards',${i},this.value)`,2)
+  )).join('')
+}
+function renderProjectList(){
+  const items=data[locale].projects||[]
+  document.getElementById('list-projects').innerHTML=items.map((x,i)=>card(x.name||'New Project',`removeItem('projects',${i})`,
+    mf('Project Name',x.name,`updateF('projects',${i},'name',this.value)`,'text',true)+
+    mta('Bullets',(x.bullets||[]).join('\n'),`updateBullets('projects',${i},this.value)`,3)
+  )).join('')
+}
+function renderRefList(){
+  const items=data[locale].references||[]
+  document.getElementById('list-references').innerHTML=items.map((x,i)=>card(x.name||'New Reference',`removeItem('references',${i})`,
+    mf('Name',x.name,`updateF('references',${i},'name',this.value)`)+
+    mf('Title',x.title,`updateF('references',${i},'title',this.value)`)+
+    mf('Company',x.company,`updateF('references',${i},'company',this.value)`)+
+    mf('Email',x.email,`updateF('references',${i},'email',this.value)`)+
+    mf('Phone',x.phone,`updateF('references',${i},'phone',this.value)`)
+  )).join('')
+}
+
+const renderers={experience:renderExpList,education:renderEduList,skills:renderSkillList,certifications:renderCertList,awards:renderAwardList,projects:renderProjectList,references:renderRefList}
+const newItems={
+  experience:{name:'',title:'',url:'',location:'',startMonth:1,startYear:new Date().getFullYear(),bullets:[]},
+  education:{name:'',degree:'',subject:'',year:new Date().getFullYear(),bullets:[]},
+  skills:{title:'',items:[],priority:0},
+  certifications:{title:'',mentorship:'',year:new Date().getFullYear(),website:''},
+  awards:{name:'',bullets:[],slug:'award-'+Date.now()},
+  projects:{name:'',bullets:[],slug:'proj-'+Date.now(),priority:0},
+  references:{name:'',title:'',company:'',email:'',phone:'',priority:0}
+}
+window.addItem=function(e,section){
+  e.stopPropagation()
+  data[locale][section]=data[locale][section]||[]
+  data[locale][section].unshift({...newItems[section]})
+  renderers[section]()
+  markDirty(section)
+  const sec=document.getElementById('sec-'+section)
+  if(!sec.classList.contains('open'))toggleSec(section)
+}
+window.removeItem=function(section,i){
+  if(!confirm('Remove this item?'))return
+  data[locale][section].splice(i,1)
+  renderers[section]()
+  markDirty(section)
+}
+window.updateF=function(section,i,key,value){data[locale][section][i][key]=value;markDirty(section)}
+window.updateBullets=function(section,i,value){data[locale][section][i].bullets=value.split('\n').map(s=>s.trim()).filter(Boolean);markDirty(section)}
+
+window.saveSection=async function(e,section){
+  e.stopPropagation()
+  const btn=e.target;btn.textContent='...';btn.disabled=true
+  const payload=section==='personal'?data[locale].personal:data[locale][section]
+  try{
+    const res=await fetch('/api/cms/profile',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({section,locale,data:payload})})
+    const result=await res.json()
+    if(res.ok){dirty.delete(section);updateBadge();toast('✓ Saved','success')}
+    else toast('Error: '+result.error,'error')
+  }catch{toast('Network error','error')}
+  btn.textContent='Save';btn.disabled=false
+}
+
+function renderPreview(){
+  const p=data[locale].personal||{},exp=data[locale].experience||[],edu=data[locale].education||[],
+    sk=data[locale].skills||[],certs=data[locale].certifications||[],awards=data[locale].awards||[],
+    refs=data[locale].references||[],projs=data[locale].projects||[]
+  const md=s=>(s||'').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<em>$1</em>').replace(/\[(.+?)\]\((.+?)\)/g,'<a href="$2">$1</a>')
+  const mo=['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+  const fmtD=(y,m)=>y?`${mo[m]||''} ${y}`.trim():(locale==='es'?'Presente':'Present')
+  document.getElementById('preview').innerHTML=`<div class="rv">
+    <div class="rv-name">${esc(p.name||'Your Name')}</div>
+    <div class="rv-contacts">
+      ${p.linkedin?`<span>linkedin.com/in/${esc(p.linkedin)}</span>`:''}
+      ${p.phone?`<span>${esc(p.phone)}</span>`:''}
+      ${p.github?`<span>github.com/${esc(p.github)}</span>`:''}
+      ${p.email?`<span>${esc(p.email)}</span>`:''}
+    </div>
+    ${p.bioHtml||''}${p.bio?`<p class="rv-bio">${esc(p.bio)}</p>`:''}
+    ${sk.length?`<div class="rv-section"><h2>${locale==='es'?'Habilidades':'Skills'}</h2>${sk.map(s=>`<p><strong>${esc(s.title)}:</strong> ${(s.items||[]).join(', ')}</p>`).join('')}</div>`:''}
+    ${exp.length?`<div class="rv-section"><h2>${locale==='es'?'Experiencia':'Experience'}</h2>${exp.map(e=>`<div class="rv-item"><div class="rv-row"><span class="rv-role">${esc(e.title)}</span><span class="rv-dash">—</span><span class="rv-company">${esc(e.name)}</span><span class="rv-date">${fmtD(e.startYear,e.startMonth)} – ${fmtD(e.endYear,e.endMonth)}</span></div>${(e.bullets||[]).length?`<ul>${e.bullets.map(b=>`<li>${md(b)}</li>`).join('')}</ul>`:''}</div>`).join('')}</div>`:''}
+    ${edu.length?`<div class="rv-section"><h2>${locale==='es'?'Educación':'Education'}</h2>${edu.map(e=>`<div class="rv-item"><div class="rv-row"><span class="rv-role">${esc(e.degree)}</span><span class="rv-dash">—</span><span class="rv-company">${esc(e.name)}</span><span class="rv-date">${e.year||''}</span></div>${(e.bullets||[]).length?`<ul>${e.bullets.map(b=>`<li>${md(b)}</li>`).join('')}</ul>`:''}</div>`).join('')}</div>`:''}
+    ${projs.length?`<div class="rv-section"><h2>${locale==='es'?'Proyectos':'Projects'}</h2>${projs.map(p=>`<div class="rv-item"><div class="rv-row"><span class="rv-role">${esc(p.name)}</span></div>${(p.bullets||[]).length?`<ul>${p.bullets.map(b=>`<li>${md(b)}</li>`).join('')}</ul>`:''}</div>`).join('')}</div>`:''}
+    ${certs.length?`<div class="rv-section"><h2>${locale==='es'?'Certificaciones':'Certifications'}</h2>${certs.map(c=>`<p><strong>${esc(c.title)}</strong> — ${esc(c.mentorship)} — ${c.year||''}</p>`).join('')}</div>`:''}
+    ${awards.length?`<div class="rv-section"><h2>${locale==='es'?'Reconocimientos':'Awards'}</h2>${awards.map(a=>`<div class="rv-item"><div class="rv-row"><span class="rv-role">${esc(a.name)}</span></div>${(a.bullets||[]).length?`<ul>${a.bullets.map(b=>`<li>${md(b)}</li>`).join('')}</ul>`:''}</div>`).join('')}</div>`:''}
+    ${refs.length?`<div class="rv-section"><h2>${locale==='es'?'Referencias':'References'}</h2>${refs.map(r=>`<p><strong>${esc(r.name)}</strong> — ${esc(r.title)} ${locale==='es'?'en':'at'} ${esc(r.company)}</p>`).join('')}</div>`:''}
+  </div>`
+}
+
+function toast(msg,type='success'){
+  const t=document.getElementById('toast')
+  t.textContent=msg;t.className=`toast show ${type}`
+  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),3000)
+}
+function esc(s){return(s||'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+</script>
+</body>
+</html>

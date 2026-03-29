@@ -1,4 +1,5 @@
 import { defineCollection, getCollection, z } from 'astro:content'
+import type { Locale } from '@/i18n'
 
 const schema = z.object({
     name: z.string(),
@@ -10,11 +11,12 @@ const schema = z.object({
 })
 
 export const EducationCollection = defineCollection({ schema, type: 'content' })
-
 export type EducationType = z.infer<typeof schema>
 
-export async function getEducation() {
-	let items = await getCollection('education')
+export async function getEducation(locale: Locale = 'en') {
+    const items = await getCollection('education', ({ id }) =>
+        id.endsWith(`.${locale}.md`) && !id.startsWith('_')
+    )
     items.sort((a, b) => b.data.year - a.data.year)
-	return items
+    return items
 }

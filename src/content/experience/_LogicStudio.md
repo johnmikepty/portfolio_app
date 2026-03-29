@@ -9,4 +9,4 @@ endMonth: 4
 endYear: 2015
 ---
 
-- Redeveloped mission-critical canal operations apps (vessel inspection, pilot assignment, ship traffic) using .NET Framework, Oracle PL/SQL, and Dojo.
+- Rediseño aplicaciones críticas de operaciones del canal (inspección de embarcaciones, asignación de pilotos, tráfico marítimo) utilizando .NET Framework, Oracle PL/SQL y Dojo.

@@ -1,18 +1,25 @@
 ---
 import { Icon } from 'astro-icon/components'
-import { getSkillSections } from '@/data/skillsection'
-import RenderMarkdown from '@/components/RenderMarkdown.astro'
+import { getSkillSectionsDB } from '@/lib/profile'
+import { getTranslations, type Locale } from '@/i18n'
 
-const skillGroups = await getSkillSections()
+interface Props { locale: Locale }
+const { locale } = Astro.props
+const t = getTranslations(locale)
+const skillGroups = await getSkillSectionsDB()
 ---
 
 <section id="skills" data-item-count={skillGroups.length}>
     <div class="section-title">
-        <h2>Skills</h2>
+        <h2>{t.sections.skills}</h2>
         <Icon name="ri:code-s-slash-fill" />
     </div>
 
     <article>
-        {skillGroups.map(({ slug }) => <RenderMarkdown type="skillsection" slug={slug} />)}
+        {skillGroups.map(({ title, items }) => (
+            <div class="skill-group">
+                <p><strong>{title}:</strong> {items.join(', ')}</p>
+            </div>
+        ))}
     </article>
 </section>

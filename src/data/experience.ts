@@ -1,4 +1,5 @@
 import { defineCollection, getCollection, z } from 'astro:content'
+import type { Locale } from '@/i18n'
 
 const schema = z.object({
     name: z.string(),
@@ -14,11 +15,12 @@ const schema = z.object({
 })
 
 export const ExperienceCollection = defineCollection({ schema, type: 'content' })
-
 export type ExperienceType = z.infer<typeof schema>
 
-export async function getExperience() {
-	let items = await getCollection('experience')
+export async function getExperience(locale: Locale = 'en') {
+    const items = await getCollection('experience', ({ id }) =>
+        id.endsWith(`.${locale}.md`) && !id.startsWith('_')
+    )
 
     items.sort((a, b) => {
         const startA = new Date(a.data.startYear, a.data.startMonth + 1)
@@ -26,5 +28,5 @@ export async function getExperience() {
         return startB.valueOf() - startA.valueOf()
     })
 
-	return items
+    return items
 }

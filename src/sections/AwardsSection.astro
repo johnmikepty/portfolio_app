@@ -1,36 +1,40 @@
 ---
 import { Icon } from 'astro-icon/components'
-import { getAwards } from '@/data/awards'
-import RenderMarkdown from '@/components/RenderMarkdown.astro'
+import { getAwardsDB } from '@/lib/profile'
+import { getTranslations, type Locale } from '@/i18n'
+import { markdownInline } from '@/lib/markdown'
 
-const awards = await getAwards()
+interface Props { locale: Locale }
+const { locale } = Astro.props
+const t = getTranslations(locale)
+const awards = await getAwardsDB(locale)
 ---
 
 <section id="awards" data-item-count={awards.length}>
     <div class="section-title">
-        <h2>Awards</h2>
+        <h2>{t.sections.awards}</h2>
         <Icon name="ri:trophy-fill" />
     </div>
 
     <div class="awards">
-        {awards.map(({ slug, data: { name } }) => (
+        {awards.map(({ name, bullets }) => (
             <article class="award">
                 <h3>{name}</h3>
-                <RenderMarkdown type="awards" slug={slug} />
+                {bullets?.length > 0 && (
+                    <ul>
+                        {bullets.map((b: string) => <li set:html={markdownInline(b)} />)}
+                    </ul>
+                )}
             </article>
         ))}
     </div>
 </section>
 
 <style>
-    .award {
-        display: flex;
-        flex-direction: column;
-    }
+    .award { display: flex; flex-direction: column; }
+    ul { margin: 0.25rem 0 0.5rem; padding-left: 1.25rem; }
 </style>
 
 <style is:global>
-    body.hide-awards #awards {
-        display: none;
-    }
+    body.hide-awards #awards { display: none; }
 </style>

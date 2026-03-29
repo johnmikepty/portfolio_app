@@ -6,6 +6,7 @@ import { ProjectCollection } from '@/data/projects'
 import { ReferenceCollection } from '@/data/references'
 import { SkillCollection } from '@/data/skills'
 import { SkillSectionCollection } from '@/data/skillsection'
+import { CertificationCollection } from '@/data/certifications'
 
 export const collections = {
     awards: AwardsCollection,
@@ -16,4 +17,5 @@ export const collections = {
     references: ReferenceCollection,
     skills: SkillCollection,
     skillSection: SkillSectionCollection,
+    certifications: CertificationCollection,
 }

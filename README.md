@@ -1,50 +1,126 @@
-# Astro Starter Kit: Minimal
+# Portfolio App
 
-```sh
-npm create astro@latest -- --template minimal
+A bilingual (EN/ES) portfolio and resume web application built with **Astro**, **MongoDB**, and **Cloudflare**. Designed to be used as a template by anyone who wants to build their own professional portfolio.
+
+## ✨ Features
+
+- 🌐 **Bilingual** — Full EN/ES language toggle, persisted via cookie
+- 📄 **Portfolio** (`/`) — Personal bio, photo, social links
+- 📋 **Resume** (`/resume`) — Full CV with skills, experience, education, projects, certifications, awards, and references
+- 🔐 **CRM** (`/crm`) — Password-protected admin panel to edit all content by language
+- 📊 **Analytics** (`/crm/visits`) — Visit tracking and resume download stats
+- 🖨️ **Print-ready** — Export to PDF via browser print
+
+## 🛠️ Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Framework | Astro 4 (SSR) |
+| Database | MongoDB (Docker locally, Atlas in production) |
+| ODM | Mongoose |
+| Auth | JWT + httpOnly cookies |
+| Deploy | Cloudflare Workers |
+| CI/CD | GitHub Actions |
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js 18+
+- Docker Desktop
+
+### Installation
+
+```bash
+# 1. Clone the repo
+git clone https://github.com/johndoe/portfolio-app.git
+cd portfolio-app
+
+# 2. Install dependencies
+npm install
+
+# 3. Start MongoDB (Docker)
+npm run db:up
+
+# 4. Copy environment variables
+cp .env.example .env
+
+# 5. Seed the database with sample data
+npm run seed
+
+# 6. Start the dev server
+npm run dev
 ```
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/minimal)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/minimal)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/minimal/devcontainer.json)
+Open `http://localhost:4321` to see the portfolio.
+Open `http://localhost:4321/resume` to see the resume.
+Open `http://localhost:8083` to see MongoDB Express (database UI).
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## ⚙️ Environment Variables
 
-## 🚀 Project Structure
+Copy `.env.example` to `.env` and fill in your values:
 
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+```env
+MONGODB_URI=mongodb://admin:admin1234@localhost:27017/portfolio?authSource=admin
+JWT_SECRET=your-secret-key-here
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## 📁 Project Structure
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+```
+src/
+├── content/          # Markdown files (bilingual: .en.md / .es.md)
+├── i18n/             # Translation JSONs (en.json, es.json)
+├── lib/              # MongoDB client + Mongoose models
+│   └── models/
+├── pages/
+│   ├── index.astro   # Portfolio
+│   ├── resume.astro  # Resume/CV
+│   ├── api/          # API endpoints
+│   └── crm/          # Admin panel
+├── sections/         # Resume section components
+└── components/       # Shared components (LangToggle, etc.)
+scripts/
+└── seed.mjs          # Database seeder
+notes/                # Project notes (gitignored)
+```
 
-Any static assets, like images, can be placed in the `public/` directory.
+## 🌍 i18n System
 
-## 🧞 Commands
+Content is split into bilingual `.md` files:
+- `experience/company.en.md` — English version
+- `experience/company.es.md` — Spanish version
 
-All commands are run from the root of the project, from a terminal:
+Static UI strings live in `src/i18n/en.json` and `src/i18n/es.json`.
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+The active language is stored in a cookie (`lang=en|es`) and toggled via the 🇺🇸 / 🇵🇦 button on the page.
 
-## 👀 Want to learn more?
+## 🔐 CMS Access
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Visit `/cms/login` and use your admin credentials to access the content editor.
 
+To set up your admin password, run:
+```bash
+node scripts/create-admin.mjs
+```
 
-/*"astro": "^5.7.4",*/
+## 📦 Available Scripts
+
+| Command | Description |
+|---|---|
+| `npm run dev` | Start dev server |
+| `npm run build` | Build for production |
+| `npm run seed` | Seed MongoDB with sample data |
+| `npm run db:up` | Start MongoDB + Mongo Express (Docker) |
+| `npm run db:down` | Stop Docker containers |
+| `npm run db:logs` | View MongoDB logs |
+
+## 📝 Customizing Your Portfolio
+
+1. Run `npm run db:up` and `npm run dev`
+2. Go to `/crm/login` and log in
+3. Edit your personal info, experience, education, skills, and more from the CRM
+4. Changes reflect immediately on `/` and `/resume`
+
+## 📄 License
+
+MIT — feel free to fork and customize.

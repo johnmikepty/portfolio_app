@@ -1,46 +1,43 @@
 ---
 import { Icon } from 'astro-icon/components'
-import RenderMarkdown from '@/components/RenderMarkdown.astro'
-import { getEducation } from '@/data/education'
+import { getEducationDB } from '@/lib/profile'
+import { getTranslations, type Locale } from '@/i18n'
+import { markdownInline } from '@/lib/markdown'
 
-const education = await getEducation()
+interface Props { locale: Locale }
+const { locale } = Astro.props
+const t = getTranslations(locale)
+const education = await getEducationDB(locale)
 ---
 
 <section id="education" data-item-count={education.length}>
     <div class="section-title">
-        <h2>Education</h2>
+        <h2>{t.sections.education}</h2>
         <Icon name="ri:school-fill" />
     </div>
 
     <div class="education">
-        {education.map(({ slug, data: { name, degree, subject, year } }) => (
+        {education.map(({ name, degree, subject, year, bullets }) => (
             <article class="education-item">
                 <div class="education-header">
                     <h3>{degree}</h3>
-
                     {subject && (
                         <span>&mdash;</span>
-
-                        <div class="subject">
-                            {subject}
-                        </div>
+                        <div class="subject">{subject}</div>
                     )}
-
                     <span>&mdash;</span>
-
-                    <div class="name personal">
-                        {name}
-                    </div>
-
+                    <div class="name personal">{name}</div>
                     <span>&mdash;</span>
-
                     <div class="dates">
                         <Icon name="ri:calendar-line" />
                         <span>{year}</span>
                     </div>
                 </div>
-                
-                <RenderMarkdown type="education" slug={slug} />
+                {bullets?.length > 0 && (
+                    <ul>
+                        {bullets.map((b: string) => <li set:html={markdownInline(b)} />)}
+                    </ul>
+                )}
             </article>
         ))}
     </div>
@@ -52,8 +49,6 @@ const education = await getEducation()
         align-items: baseline;
         gap: 1ch;
     }
-
-    .subject, .name, .dates {
-        font-weight: bold;
-    }
+    .subject, .name, .dates { font-weight: bold; }
+    ul { margin: 0.25rem 0 0.5rem; padding-left: 1.25rem; }
 </style>

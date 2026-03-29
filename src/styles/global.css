@@ -124,11 +124,7 @@ body, html {
 	text-rendering: optimizeLegibility;
 }
 
-@media not print {
-	html {
-		width: 8.5in;
-	}
-}
+/* width: 8.5in is applied only on resume-page via Layout.astro */
 
 body {
 	background: var(--col-bg);
