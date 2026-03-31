@@ -5,13 +5,14 @@ import '@/styles/tinosfont.css?5'
 interface Props {
     title?: string
     pageClass?: string  // 'resume-page' | 'portfolio-page'
+    lang?: string
 }
 
-const { title = 'Portfolio', pageClass = '' } = Astro.props
+const { title = 'Portfolio', pageClass = '', lang = 'en' } = Astro.props
 ---
 
 <!DOCTYPE html>
-<html>
+<html lang={lang}>
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -31,27 +32,27 @@ const { title = 'Portfolio', pageClass = '' } = Astro.props
 </html>
 
 <style>
-    /* Resume layout: fixed paper width */
+    /* Resume layout: dark bg body, white paper content */
     body.resume-page {
         display: flex;
         flex-direction: column;
-        justify-content: center;
         align-items: center;
+        background: #080c14;
+        min-height: 100vh;
     }
 
     body.resume-page main {
+        background: white;
         margin: 0 auto;
         width: 8.5in;
         padding: 0.15in 0.15in;
     }
 
     @media not print {
-        body.resume-page {
-            /* constrain html width only for resume */
-        }
         body.resume-page main {
             outline: 1px solid #0004;
-            margin-top: 64px;
+            margin-top: 80px;
+            margin-bottom: 3rem;
         }
     }
 

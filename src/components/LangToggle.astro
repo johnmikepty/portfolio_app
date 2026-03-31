@@ -1,11 +1,14 @@
 ---
 import type { Locale } from '@/i18n'
 
-interface Props { locale: Locale }
-const { locale } = Astro.props
+interface Props {
+    locale: Locale
+    variant?: 'light' | 'dark'  // light = resume (fondo blanco), dark = portfolio (fondo oscuro)
+}
+const { locale, variant = 'light' } = Astro.props
 ---
 
-<div class="lang-toggle" title="Switch language / Cambiar idioma">
+<div class={`lang-toggle lang-toggle--${variant}`} title="Switch language / Cambiar idioma">
     <button
         class={locale === 'en' ? 'active' : ''}
         data-lang="en"
@@ -28,13 +31,11 @@ const { locale } = Astro.props
         btn.addEventListener('click', async () => {
             const lang = btn.dataset.lang
             if (!lang) return
-
             await fetch('/api/set-lang', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ lang }),
             })
-
             window.location.reload()
         })
     })
@@ -45,46 +46,71 @@ const { locale } = Astro.props
         position: fixed;
         top: 1rem;
         right: 1rem;
-        z-index: 100;
+        z-index: 1000;
         display: flex;
         align-items: center;
         gap: 0.4rem;
-        background: var(--col-bg, #fff);
-        border: 1.5px solid var(--col-fg, #222);
         border-radius: 999px;
         padding: 0.3rem 0.75rem;
-        font-size: 0.85rem;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-
-        @media print {
-            display: none;
-        }
+        font-size: 0.82rem;
+        transition: background 0.2s;
     }
 
+    @media print { .lang-toggle { display: none; } }
+
+    /* ── Light variant (resume) ── */
+    .lang-toggle--light {
+        background: var(--col-bg, #fff);
+        border: 1.5px solid rgba(0,0,0,0.15);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .lang-toggle--light button {
+        color: var(--col-fg, #222);
+        opacity: 0.5;
+    }
+    .lang-toggle--light button:hover { opacity: 0.85; }
+    .lang-toggle--light button.active {
+        opacity: 1;
+        font-weight: bold;
+        background: var(--col-primary, #00786c);
+        color: #fff;
+    }
+    .lang-toggle--light .divider { color: rgba(0,0,0,0.2); }
+
+    /* ── Dark variant (portfolio) — top LEFT to avoid nav conflict ── */
+    .lang-toggle--dark {
+        right: auto;
+        left: 1rem;
+        background: rgba(8,12,20,0.85);
+        border: 1px solid rgba(0,229,255,0.25);
+        backdrop-filter: blur(12px);
+        box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    }
+    .lang-toggle--dark button {
+        color: #8892a4;
+        opacity: 1;
+    }
+    .lang-toggle--dark button:hover { color: #f0f4ff; }
+    .lang-toggle--dark button.active {
+        font-weight: bold;
+        color: #080c14;
+        background: #00e5ff;
+        border-radius: 999px;
+        padding: 0.1rem 0.4rem;
+    }
+    .lang-toggle--dark .divider { color: rgba(0,229,255,0.2); }
+
+    /* ── Shared button base ── */
     button {
         background: none;
         border: none;
         cursor: pointer;
         padding: 0.1rem 0.3rem;
         border-radius: 999px;
-        font-size: 0.85rem;
-        color: var(--col-fg, #222);
-        opacity: 0.5;
-        transition: opacity 0.15s, background 0.15s;
+        font-size: 0.82rem;
+        font-family: inherit;
+        transition: all 0.15s;
     }
 
-    button:hover {
-        opacity: 0.85;
-    }
-
-    button.active {
-        opacity: 1;
-        font-weight: bold;
-        background: var(--col-primary, #0066cc);
-        color: #fff;
-    }
-
-    .divider {
-        opacity: 0.3;
-    }
+    .divider { font-size: 0.7rem; }
 </style>

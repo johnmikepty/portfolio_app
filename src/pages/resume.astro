@@ -10,20 +10,72 @@ import AwardsSection from '@/sections/AwardsSection.astro'
 import CertificationsSection from '@/sections/CertificationsSection.astro'
 import LangToggle from '@/components/LangToggle.astro'
 import { getLocaleFromCookie, type Locale } from '@/i18n'
+import { getSectionVisibility } from '@/lib/profile'
 
 const cookieHeader = Astro.request.headers.get('cookie')
 const locale: Locale = getLocaleFromCookie(cookieHeader)
+const vis = await getSectionVisibility('resume')
 ---
 
-<Layout pageClass="resume-page" title="Resume">
-    <LangToggle locale={locale} />
+<Layout pageClass="resume-page" title="Resume" lang={locale}>
 
-    <SummarySection locale={locale} />
-    <SkillsSection locale={locale} />
-    <ExperienceSection locale={locale} />
-    <EducationSection locale={locale} />
-    <ProjectsSection locale={locale} />
-    <CertificationsSection locale={locale} />
-    <AwardsSection locale={locale} />
-    <ReferencesSection locale={locale} />
+    <!-- Resume Navbar -->
+    <nav class="resume-nav">
+        <a href="/" class="resume-nav-back">
+            ← {locale === 'es' ? 'Portafolio' : 'Portfolio'}
+        </a>
+        <LangToggle locale={locale} variant="dark" />
+    </nav>
+
+    {vis.summary        && <SummarySection        locale={locale} />}
+    {vis.skills         && <SkillsSection         locale={locale} />}
+    {vis.experience     && <ExperienceSection     locale={locale} />}
+    {vis.education      && <EducationSection      locale={locale} />}
+    {vis.projects       && <ProjectsSection       locale={locale} />}
+    {vis.certifications && <CertificationsSection locale={locale} />}
+    {vis.awards         && <AwardsSection         locale={locale} />}
+    {vis.references     && <ReferencesSection     locale={locale} />}
 </Layout>
+
+<style>
+    .resume-nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 1.5rem;
+        height: 56px;
+        background: rgba(8,12,20,0.92);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(0,229,255,0.15);
+    }
+
+    .resume-nav-back {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.8rem;
+        color: #8892a4;
+        text-decoration: none;
+        letter-spacing: 0.05em;
+        transition: color 0.2s;
+    }
+
+    .resume-nav-back:hover {
+        color: #00e5ff;
+    }
+
+    /* Override LangToggle position when inside nav (not fixed/floating) */
+    .resume-nav :global(.lang-toggle) {
+        position: static;
+        top: auto;
+        right: auto;
+        left: auto;
+    }
+
+    @media print {
+        .resume-nav { display: none; }
+    }
+</style>

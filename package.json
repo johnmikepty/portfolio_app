@@ -4,23 +4,23 @@
   "version": "1.0.0",
   "description": "Bilingual (EN/ES) portfolio and resume app built with Astro, MongoDB, and Cloudflare. Features a CRM for editing content and analytics for tracking visits.",
   "author": {
-  "name": "John Doe",
-  "email": "john.doe@email.com",
-  "url": "https://github.com/johndoe"
+    "name": "John Doe",
+    "email": "john.doe@email.com",
+    "url": "https://github.com/johndoe"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/johndoe/portfolio-app"
-   },
+  },
   "keywords": [
     "astro",
     "portfolio",
     "resume",
     "i18n",
-     "mongodb",
-     "cloudflare"
+    "mongodb",
+    "cloudflare"
   ],
-   "bugs": {
+  "bugs": {
     "url": "https://github.com/johndoe/portfolio-app/issues"
   },
   "scripts": {
@@ -44,6 +44,7 @@
     "@iconify-json/skill-icons": "latest",
     "astro": "^4.15.2",
     "mongoose": "^9.3.3",
+    "puppeteer": "^24.40.0",
     "typescript": "^5.5.4"
   },
   "devDependencies": {

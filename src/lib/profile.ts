@@ -6,6 +6,7 @@
 
 import { connectDB } from './mongodb'
 import { Personal } from './models/Personal'
+import { SectionVisibility } from './models/SectionVisibility'
 import { Experience } from './models/Experience'
 import { Education } from './models/Education'
 import { Project } from './models/Project'
@@ -92,4 +93,27 @@ export async function getSkillSectionsDB() {
         .sort({ priority: 1 })
         .lean()
     return docs
+}
+
+// ─── Section Visibility ───────────────────────────────────────────────────────
+
+const defaultSections = {
+    summary: true, skills: true, experience: true, education: true,
+    projects: true, certifications: true, awards: true, references: true,
+    highlights: true, contact: true,
+}
+
+export async function getSectionVisibility(page: 'resume' | 'portfolio') {
+    await connectDB()
+    const doc = await SectionVisibility.findOne({ page }).lean()
+    return doc?.sections ?? defaultSections
+}
+
+export async function setSectionVisibility(page: 'resume' | 'portfolio', sections: Record<string, boolean>) {
+    await connectDB()
+    await SectionVisibility.findOneAndUpdate(
+        { page },
+        { page, sections },
+        { upsert: true, new: true }
+    )
 }

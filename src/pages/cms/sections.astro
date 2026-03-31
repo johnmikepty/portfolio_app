@@ -1,0 +1,284 @@
+---
+import CmsLayout from '@/layouts/CmsLayout.astro'
+import { getSectionVisibility } from '@/lib/profile'
+
+const resumeVis  = await getSectionVisibility('resume')
+const portfolioVis = await getSectionVisibility('portfolio')
+
+const resumeSections = [
+    { key: 'summary',        label: 'Summary / Bio',    icon: '👤' },
+    { key: 'skills',         label: 'Skills',           icon: '🛠️' },
+    { key: 'experience',     label: 'Experience',       icon: '💼' },
+    { key: 'education',      label: 'Education',        icon: '🎓' },
+    { key: 'projects',       label: 'Projects',         icon: '🚀' },
+    { key: 'certifications', label: 'Certifications',   icon: '📜' },
+    { key: 'awards',         label: 'Awards',           icon: '🏆' },
+    { key: 'references',     label: 'References',       icon: '👥' },
+]
+
+const portfolioSections = [
+    { key: 'highlights',  label: 'Highlights Cards', icon: '⚡' },
+    { key: 'experience',  label: 'Experience',       icon: '💼' },
+    { key: 'projects',    label: 'Projects',         icon: '🚀' },
+    { key: 'skills',      label: 'Skills',           icon: '🛠️' },
+    { key: 'contact',     label: 'Contact',          icon: '📬' },
+]
+---
+
+<CmsLayout title="Sections Visibility" activeSection="sections">
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Sections Visibility</h1>
+        <p class="page-sub">Show or hide sections on each page. Changes apply immediately.</p>
+    </div>
+</div>
+
+<div class="pages-grid">
+
+    <!-- RESUME -->
+    <div class="vis-card">
+        <div class="vis-card-header">
+            <span class="vis-icon">📄</span>
+            <div>
+                <h2 class="vis-title">Resume <code>/resume</code></h2>
+                <p class="vis-sub">Toggle sections of the CV page</p>
+            </div>
+        </div>
+        <div class="sections-list" id="resume-list">
+            {resumeSections.map(s => (
+                <label class="section-toggle">
+                    <div class="toggle-left">
+                        <span class="toggle-icon">{s.icon}</span>
+                        <span class="toggle-label">{s.label}</span>
+                    </div>
+                    <input
+                        type="checkbox"
+                        class="toggle-input"
+                        data-page="resume"
+                        data-key={s.key}
+                        checked={resumeVis[s.key as keyof typeof resumeVis] !== false}
+                    />
+                    <span class="toggle-switch"></span>
+                </label>
+            ))}
+        </div>
+        <button class="save-btn" data-page="resume">Save Resume Sections</button>
+    </div>
+
+    <!-- PORTFOLIO -->
+    <div class="vis-card">
+        <div class="vis-card-header">
+            <span class="vis-icon">🌐</span>
+            <div>
+                <h2 class="vis-title">Portfolio <code>/</code></h2>
+                <p class="vis-sub">Toggle sections of the portfolio homepage</p>
+            </div>
+        </div>
+        <div class="sections-list" id="portfolio-list">
+            {portfolioSections.map(s => (
+                <label class="section-toggle">
+                    <div class="toggle-left">
+                        <span class="toggle-icon">{s.icon}</span>
+                        <span class="toggle-label">{s.label}</span>
+                    </div>
+                    <input
+                        type="checkbox"
+                        class="toggle-input"
+                        data-page="portfolio"
+                        data-key={s.key}
+                        checked={portfolioVis[s.key as keyof typeof portfolioVis] !== false}
+                    />
+                    <span class="toggle-switch"></span>
+                </label>
+            ))}
+        </div>
+        <button class="save-btn" data-page="portfolio">Save Portfolio Sections</button>
+    </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+</CmsLayout>
+
+<script>
+document.querySelectorAll<HTMLButtonElement>('.save-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+        const page = btn.dataset.page as string
+        const inputs = document.querySelectorAll<HTMLInputElement>(`.toggle-input[data-page="${page}"]`)
+        const sections: Record<string, boolean> = {}
+        inputs.forEach(inp => { sections[inp.dataset.key!] = inp.checked })
+
+        btn.textContent = 'Saving...'
+        btn.disabled = true
+
+        try {
+            const res = await fetch('/api/cms/sections', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ page, sections }),
+            })
+            const result = await res.json()
+            if (res.ok) toast(`✓ ${page} sections saved`, 'success')
+            else toast('Error: ' + result.error, 'error')
+        } catch {
+            toast('Network error', 'error')
+        }
+
+        btn.textContent = `Save ${page.charAt(0).toUpperCase() + page.slice(1)} Sections`
+        btn.disabled = false
+    })
+})
+
+function toast(msg: string, type: string) {
+    const t = document.getElementById('toast')!
+    t.textContent = msg
+    t.className = `toast show ${type}`
+    clearTimeout((t as any)._t)
+    ;(t as any)._t = setTimeout(() => t.classList.remove('show'), 3000)
+}
+</script>
+
+<style>
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.page-title { font-size: 1.5rem; font-weight: 500; color: #f0f4ff; margin-bottom: 0.25rem; }
+.page-sub { font-size: 0.85rem; color: #8892a4; }
+
+.pages-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.vis-card {
+    background: #0d1220;
+    border: 1px solid rgba(0,229,255,0.12);
+    border-radius: 10px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.vis-card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+}
+.vis-icon { font-size: 1.5rem; margin-top: 0.1rem; }
+.vis-title {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #f0f4ff;
+    margin-bottom: 0.2rem;
+}
+.vis-title code {
+    font-size: 0.75rem;
+    color: #00e5ff;
+    background: rgba(0,229,255,0.08);
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+    font-family: 'JetBrains Mono', monospace;
+    margin-left: 0.4rem;
+}
+.vis-sub { font-size: 0.78rem; color: #8892a4; }
+
+.sections-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.section-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.65rem 0.75rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s;
+    user-select: none;
+}
+.section-toggle:hover { background: rgba(255,255,255,0.03); }
+
+.toggle-left {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+.toggle-icon { font-size: 0.9rem; width: 1.2rem; text-align: center; }
+.toggle-label { font-size: 0.85rem; color: #f0f4ff; }
+
+/* Hide native checkbox */
+.toggle-input { display: none; }
+
+/* Custom toggle switch */
+.toggle-switch {
+    width: 36px;
+    height: 20px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 999px;
+    position: relative;
+    transition: background 0.2s;
+    flex-shrink: 0;
+}
+.toggle-switch::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #8892a4;
+    transition: transform 0.2s, background 0.2s;
+}
+.toggle-input:checked + .toggle-switch {
+    background: rgba(0,229,255,0.25);
+}
+.toggle-input:checked + .toggle-switch::after {
+    transform: translateX(16px);
+    background: #00e5ff;
+}
+
+.save-btn {
+    background: #00e5ff;
+    color: #080c14;
+    border: none;
+    border-radius: 6px;
+    padding: 0.65rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: opacity 0.2s;
+    width: 100%;
+}
+.save-btn:hover:not(:disabled) { opacity: 0.85; }
+.save-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.toast {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 9999;
+    padding: 0.6rem 1.25rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-family: 'JetBrains Mono', monospace;
+    display: none;
+}
+.toast.show { display: block; }
+.toast.success { background: #0d2a1a; color: #28c840; border: 1px solid #28c840; }
+.toast.error { background: #2a0d0d; color: #ff5f57; border: 1px solid #ff5f57; }
+
+@media (max-width: 700px) {
+    .pages-grid { grid-template-columns: 1fr; }
+}
+</style>
