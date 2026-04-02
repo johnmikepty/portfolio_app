@@ -6,6 +6,7 @@
 
 import { connectDB } from './mongodb'
 import { Personal } from './models/Personal'
+import { SectionVisibility } from './models/SectionVisibility'
 import { Experience } from './models/Experience'
 import { Education } from './models/Education'
 import { Project } from './models/Project'
@@ -92,4 +93,41 @@ export async function getSkillSectionsDB() {
         .sort({ priority: 1 })
         .lean()
     return docs
+}
+
+// ─── Section Visibility ───────────────────────────────────────────────────────
+
+export const defaultSections = {
+    summary: true, skills: true, experience: true, education: true,
+    projects: true, certifications: true, awards: true, references: true,
+    highlights: true, contact: true,
+}
+
+export async function getSectionVisibility(page: 'resume' | 'portfolio') {
+    await connectDB()
+    const doc = await SectionVisibility.findOne({ page }).lean()
+    if (!doc?.sections) return { ...defaultSections }
+    // Merge with defaults so missing keys always fall back to true
+    return { ...defaultSections, ...doc.sections }
+}
+
+export async function setSectionVisibility(page: 'resume' | 'portfolio', sections: Record<string, boolean>) {
+    await connectDB()
+    // Patch only the provided keys using dot-notation $set
+    const patch: Record<string, unknown> = {}
+    for (const [key, val] of Object.entries(sections)) {
+        patch[`sections.${key}`] = val
+    }
+    const existing = await SectionVisibility.findOne({ page })
+    if (!existing) {
+        // First time: create with full defaults merged with the incoming patch
+        const merged = { ...defaultSections, ...sections }
+        await SectionVisibility.create({ page, sections: merged })
+    } else {
+        await SectionVisibility.findOneAndUpdate(
+            { page },
+            { $set: patch },
+            { new: true }
+        )
+    }
 }

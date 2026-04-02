@@ -304,3 +304,28 @@ hr {
 		text-decoration: none;
 	} */
 }
+
+/* Back to portfolio button — shown on /resume */
+.back-btn {
+	position: fixed;
+	top: 1rem;
+	left: 1rem;
+	z-index: 100;
+	background: rgba(8,12,20,0.9);
+	color: #00e5ff;
+	border: 1px solid rgba(0,229,255,0.3);
+	border-radius: 999px;
+	padding: 0.3rem 0.9rem;
+	font-size: 0.78rem;
+	font-family: 'JetBrains Mono', monospace;
+	text-decoration: none;
+	backdrop-filter: blur(8px);
+	transition: background 0.2s, border-color 0.2s;
+}
+.back-btn:hover {
+	background: rgba(0,229,255,0.1);
+	border-color: #00e5ff;
+}
+@media print {
+	.back-btn { display: none; }
+}

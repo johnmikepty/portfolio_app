@@ -6,7 +6,7 @@ import type { Locale } from '@/i18n'
 interface Props { locale: Locale }
 const { locale } = Astro.props
 
-const { name, email, phone, linkedin, github, bio, bioHtml } = await getPersonal(locale)
+const { name, title, email, phone, linkedin, github, bio, bioHtml } = await getPersonal(locale)
 ---
 
 <section id="summary">
@@ -33,6 +33,8 @@ const { name, email, phone, linkedin, github, bio, bioHtml } = await getPersonal
             <span class="personal">{email}</span>
         </div>
     </div>
+
+    {title && <h3 class="title">{title}</h3>}
 
     <div class="summary-text">
         {bioHtml && <Fragment set:html={bioHtml} />}
