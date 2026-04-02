@@ -89,10 +89,7 @@ const highlights = locale === 'es'
         <div class="hero-content">
             <p class="hero-eyebrow">// {location}</p>
             <h1 class="hero-name">{name}</h1>
-            <h2 class="hero-role">
-                {locale === 'es' ? 'SENIOR FULL STACK' : 'SENIOR FULL STACK'}<br>
-                <span class="hero-role-accent">ENGINEER &amp; SDET</span>
-            </h2>
+            <h2 class="hero-role">{title}</h2>
             <p class="hero-bio">{bio}</p>
             <div class="hero-actions">
                 <a href="#projects" class="btn-primary">{locale === 'es' ? 'Ver Proyectos' : 'View Projects'}</a>
@@ -110,7 +107,7 @@ const highlights = locale === 'es'
                 </div>
                 <pre class="code-content"><code><span class="c-keyword">const</span> <span class="c-var">dev</span> = <span class="c-bracket">&#123;</span>
   name<span class="c-punct">:</span> <span class="c-str">"{name.split(' ')[0]}"</span><span class="c-punct">,</span>
-  role<span class="c-punct">:</span> <span class="c-str">"Full Stack + SDET"</span><span class="c-punct">,</span>
+  role<span class="c-punct">:</span> <span class="c-str">"{title.split(' ').slice(0,3).join(' ')}"</span><span class="c-punct">,</span>
   years<span class="c-punct">:</span> <span class="c-num">14</span><span class="c-punct">,</span>
   stack<span class="c-punct">:</span> <span class="c-bracket">[</span>
     <span class="c-str">".NET Core"</span><span class="c-punct">,</span>

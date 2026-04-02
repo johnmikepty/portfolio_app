@@ -216,49 +216,49 @@ input::placeholder,textarea::placeholder{color:rgba(255,255,255,.2);}
         <div class="sec" id="sec-experience">
           <div class="sec-head" onclick="toggleSec('experience')">
             <div class="sec-head-left"><i class="chevron" id="chev-experience">›</i><span class="sec-icon">💼</span><span class="sec-name">Work Experience</span></div>
-            <div class="sec-actions"><button class="add-btn" onclick="addItem(event,'experience')">+ Add</button><button class="save-btn" onclick="saveSection(event,'experience')">Save</button></div>
+            <div class="sec-actions"><label class="vis-toggle-wrap" onclick="event.stopPropagation()" title="Toggle visibility on resume"><input type="checkbox" class="vis-toggle-input" id="vis-experience" onchange="toggleVis('experience',this.checked)"><span class="vis-toggle-sw"></span></label><button class="add-btn" onclick="addItem(event,'experience')">+ Add</button><button class="save-btn" onclick="saveSection(event,'experience')">Save</button></div>
           </div>
           <div class="sec-body" id="list-experience"></div>
         </div>
         <div class="sec" id="sec-education">
           <div class="sec-head" onclick="toggleSec('education')">
             <div class="sec-head-left"><i class="chevron" id="chev-education">›</i><span class="sec-icon">🎓</span><span class="sec-name">Education</span></div>
-            <div class="sec-actions"><button class="add-btn" onclick="addItem(event,'education')">+ Add</button><button class="save-btn" onclick="saveSection(event,'education')">Save</button></div>
+            <div class="sec-actions"><label class="vis-toggle-wrap" onclick="event.stopPropagation()" title="Toggle visibility on resume"><input type="checkbox" class="vis-toggle-input" id="vis-education" onchange="toggleVis('education',this.checked)"><span class="vis-toggle-sw"></span></label><button class="add-btn" onclick="addItem(event,'education')">+ Add</button><button class="save-btn" onclick="saveSection(event,'education')">Save</button></div>
           </div>
           <div class="sec-body" id="list-education"></div>
         </div>
         <div class="sec" id="sec-skills">
           <div class="sec-head" onclick="toggleSec('skills')">
             <div class="sec-head-left"><i class="chevron" id="chev-skills">›</i><span class="sec-icon">🛠️</span><span class="sec-name">Skills & Interests</span></div>
-            <div class="sec-actions"><button class="add-btn" onclick="addItem(event,'skills')">+ Add</button><button class="save-btn" onclick="saveSection(event,'skills')">Save</button></div>
+            <div class="sec-actions"><label class="vis-toggle-wrap" onclick="event.stopPropagation()" title="Toggle visibility on resume"><input type="checkbox" class="vis-toggle-input" id="vis-skills" onchange="toggleVis('skills',this.checked)"><span class="vis-toggle-sw"></span></label><button class="add-btn" onclick="addItem(event,'skills')">+ Add</button><button class="save-btn" onclick="saveSection(event,'skills')">Save</button></div>
           </div>
           <div class="sec-body" id="list-skills"></div>
         </div>
         <div class="sec" id="sec-certifications">
           <div class="sec-head" onclick="toggleSec('certifications')">
             <div class="sec-head-left"><i class="chevron" id="chev-certifications">›</i><span class="sec-icon">📜</span><span class="sec-name">Certifications</span></div>
-            <div class="sec-actions"><button class="add-btn" onclick="addItem(event,'certifications')">+ Add</button><button class="save-btn" onclick="saveSection(event,'certifications')">Save</button></div>
+            <div class="sec-actions"><label class="vis-toggle-wrap" onclick="event.stopPropagation()" title="Toggle visibility on resume"><input type="checkbox" class="vis-toggle-input" id="vis-certifications" onchange="toggleVis('certifications',this.checked)"><span class="vis-toggle-sw"></span></label><button class="add-btn" onclick="addItem(event,'certifications')">+ Add</button><button class="save-btn" onclick="saveSection(event,'certifications')">Save</button></div>
           </div>
           <div class="sec-body" id="list-certifications"></div>
         </div>
         <div class="sec" id="sec-awards">
           <div class="sec-head" onclick="toggleSec('awards')">
             <div class="sec-head-left"><i class="chevron" id="chev-awards">›</i><span class="sec-icon">🏆</span><span class="sec-name">Awards & Scholarships</span></div>
-            <div class="sec-actions"><button class="add-btn" onclick="addItem(event,'awards')">+ Add</button><button class="save-btn" onclick="saveSection(event,'awards')">Save</button></div>
+            <div class="sec-actions"><label class="vis-toggle-wrap" onclick="event.stopPropagation()" title="Toggle visibility on resume"><input type="checkbox" class="vis-toggle-input" id="vis-awards" onchange="toggleVis('awards',this.checked)"><span class="vis-toggle-sw"></span></label><button class="add-btn" onclick="addItem(event,'awards')">+ Add</button><button class="save-btn" onclick="saveSection(event,'awards')">Save</button></div>
           </div>
           <div class="sec-body" id="list-awards"></div>
         </div>
         <div class="sec" id="sec-projects">
           <div class="sec-head" onclick="toggleSec('projects')">
             <div class="sec-head-left"><i class="chevron" id="chev-projects">›</i><span class="sec-icon">🚀</span><span class="sec-name">Projects</span></div>
-            <div class="sec-actions"><button class="add-btn" onclick="addItem(event,'projects')">+ Add</button><button class="save-btn" onclick="saveSection(event,'projects')">Save</button></div>
+            <div class="sec-actions"><label class="vis-toggle-wrap" onclick="event.stopPropagation()" title="Toggle visibility on resume"><input type="checkbox" class="vis-toggle-input" id="vis-projects" onchange="toggleVis('projects',this.checked)"><span class="vis-toggle-sw"></span></label><button class="add-btn" onclick="addItem(event,'projects')">+ Add</button><button class="save-btn" onclick="saveSection(event,'projects')">Save</button></div>
           </div>
           <div class="sec-body" id="list-projects"></div>
         </div>
         <div class="sec" id="sec-references">
           <div class="sec-head" onclick="toggleSec('references')">
             <div class="sec-head-left"><i class="chevron" id="chev-references">›</i><span class="sec-icon">👥</span><span class="sec-name">References</span></div>
-            <div class="sec-actions"><button class="add-btn" onclick="addItem(event,'references')">+ Add</button><button class="save-btn" onclick="saveSection(event,'references')">Save</button></div>
+            <div class="sec-actions"><label class="vis-toggle-wrap" onclick="event.stopPropagation()" title="Toggle visibility on resume"><input type="checkbox" class="vis-toggle-input" id="vis-references" onchange="toggleVis('references',this.checked)"><span class="vis-toggle-sw"></span></label><button class="add-btn" onclick="addItem(event,'references')">+ Add</button><button class="save-btn" onclick="saveSection(event,'references')">Save</button></div>
           </div>
           <div class="sec-body" id="list-references"></div>
         </div>
@@ -275,11 +275,16 @@ input::placeholder,textarea::placeholder{color:rgba(255,255,255,.2);}
   </div>
 </div>
 <div class="toast" id="toast"></div>
-<script define:vars={{ initialData }}>
+<script define:vars={{ initialData, resumeVis }}>
 let locale='en',data=JSON.parse(JSON.stringify(initialData)),dirty=new Set()
 
 document.addEventListener('DOMContentLoaded',()=>{
   loadPersonalFields();renderLists();renderPreview();toggleSec('personal')
+  // Init visibility toggles from server state
+  ;['experience','education','skills','certifications','awards','projects','references'].forEach(key=>{
+    const el=document.getElementById('vis-'+key)
+    if(el)el.checked=resumeVis[key]!==false
+  })
   document.querySelectorAll('.lang-btn').forEach(btn=>{
     btn.addEventListener('click',()=>{
       if(btn.dataset.lang===locale)return
@@ -445,9 +450,14 @@ window.saveSection=async function(e,section){
 }
 
 function renderPreview(){
-  const p=data[locale].personal||{},exp=data[locale].experience||[],edu=data[locale].education||[],
-    sk=data[locale].skills||[],certs=data[locale].certifications||[],awards=data[locale].awards||[],
-    refs=data[locale].references||[],projs=data[locale].projects||[]
+  const p=data[locale].personal||{}
+  const exp=visState.experience!==false?data[locale].experience||[]:[] 
+  const edu=visState.education!==false?data[locale].education||[]:[]
+  const sk=visState.skills!==false?data[locale].skills||[]:[]
+  const certs=visState.certifications!==false?data[locale].certifications||[]:[]
+  const awards=visState.awards!==false?data[locale].awards||[]:[]
+  const refs=visState.references!==false?data[locale].references||[]:[]
+  const projs=visState.projects!==false?data[locale].projects||[]:[]
   const md=s=>(s||'').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<em>$1</em>').replace(/\[(.+?)\]\((.+?)\)/g,'<a href="$2">$1</a>')
   const mo=['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
   const fmtD=(y,m)=>y?`${mo[m]||''} ${y}`.trim():(locale==='es'?'Presente':'Present')
@@ -469,6 +479,24 @@ function renderPreview(){
     ${awards.length?`<div class="rv-section"><h2>${locale==='es'?'Reconocimientos':'Awards'}<span class="sec-icon-right"><i class="fa fa-trophy"></i></span></h2>${awards.map(a=>`<div class="rv-item"><div class="rv-row"><span class="rv-role">${esc(a.name)}</span></div>${(a.bullets||[]).length?`<ul>${a.bullets.map(b=>`<li>${md(b)}</li>`).join('')}</ul>`:''}</div>`).join('')}</div>`:''}
     ${refs.length?`<div class="rv-section"><h2>${locale==='es'?'Referencias':'References'}<span class="sec-icon-right"><i class="fa fa-users"></i></span></h2><ul>${refs.map(r=>`<li class="rv-ref-detail"><strong>${esc(r.name)}</strong> \u2014 ${esc(r.title)} ${locale==='es'?'en':'at'} ${esc(r.company)}${r.email?` \u2014 ${esc(r.email)}`:''}${r.phone?` \u2014 ${esc(r.phone)}`:''}</li>`).join('')}</ul></div>`:''}
   </div>`
+}
+
+// Local visibility state (mirrors server, updated optimistically)
+let visState=Object.assign({experience:true,education:true,skills:true,certifications:true,awards:true,projects:true,references:true},resumeVis)
+
+window.toggleVis=async function(section,enabled){
+  const el=document.getElementById('vis-'+section)
+  if(el)el.disabled=true
+  const prev=visState[section]
+  visState[section]=enabled
+  renderPreview()
+  try{
+    const res=await fetch('/api/cms/sections',{method:'PUT',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({page:'resume',sections:{[section]:enabled}})})
+    if(res.ok){toast(enabled?`✓ ${section} visible`:`${section} hidden`,'success')}
+    else{visState[section]=prev;if(el)el.checked=prev;renderPreview();toast('Error saving visibility','error')}
+  }catch{visState[section]=prev;if(el)el.checked=prev;renderPreview();toast('Network error','error')}
+  if(el)el.disabled=false
 }
 
 function toast(msg,type='success'){

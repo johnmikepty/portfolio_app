@@ -88,19 +88,20 @@ const nav = [
         --sidebar-w: 240px;
     }
 
-    html, body { height: 100%; }
+    html, body {
+        height: 100%;
+        overflow-y: auto;
+    }
 
     body {
         background: var(--bg);
         color: var(--white);
         font-family: var(--font-body);
-        min-height: 100%;
+        min-height: 100vh;
     }
 
     .crm-layout {
-        display: grid;
-        grid-template-columns: var(--sidebar-w) 1fr;
-        height: 100%;
+        display: block;
         min-height: 100vh;
     }
 
@@ -204,12 +205,10 @@ const nav = [
     .crm-main {
         margin-left: var(--sidebar-w);
         min-height: 100vh;
-        height: 100%;
-        width: calc(100% - var(--sidebar-w));
         min-width: 0;
     }
 
-    /* Full width: lock height to viewport */
+    /* Full width: lock height a viewport solo para el editor split-view */
     .crm-layout:has(.crm-content-full) .crm-main {
         height: 100vh;
         overflow: hidden;
@@ -219,7 +218,8 @@ const nav = [
 
     .crm-content {
         padding: 2rem 2.5rem;
-        max-width: 1000px;
+        max-width: 1100px;
+        min-height: 100%;
     }
 
     /* Full width mode for split-view editors */
