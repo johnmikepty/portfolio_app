@@ -110,7 +110,7 @@ cp .env.example .env
 # 5. Seed the database with sample data (John Doe)
 npm run seed
 
-# 6. Create your admin user
+# 6. Create your admin user (script is gitignored — run locally)
 node scripts/create-admin.mjs
 
 # 7. Start the dev server
@@ -152,7 +152,7 @@ src/
 │   ├── models/         # Mongoose models (Personal, Experience, Visit, ...)
 │   ├── auth.ts         # JWT + password hashing (Web Crypto API)
 │   ├── mongodb.ts      # Singleton MongoDB connection
-│   └── profile.ts      # Data access layer
+│   └── profile.ts      # Data access layer (all MongoDB queries)
 ├── pages/
 │   ├── index.astro     # Portfolio (public)
 │   ├── resume.astro    # Resume / CV (public)
@@ -184,9 +184,28 @@ The CMS includes:
 - **Sections Visibility** — Toggle which sections appear on the public resume and portfolio
 - **Analytics** — Visit stats with 30-day chart, device breakdown, and country breakdown
 
-To create your admin account:
+To create your admin account, run the local script (gitignored — not included in the repo):
 ```bash
 node scripts/create-admin.mjs
+```
+
+If you don't have the script, you can create the admin user manually via Node.js:
+
+```js
+// Run with: node --input-type=module
+import { createHash } from 'crypto'
+import { MongoClient } from 'mongodb'
+
+const MONGODB_URI = 'mongodb://admin:admin1234@localhost:27017/portfolio?authSource=admin'
+const email = 'your@email.com'      // change this
+const password = 'your-password'    // change this
+
+const hash = createHash('sha256').update(password).digest('hex')
+const client = await MongoClient.connect(MONGODB_URI)
+const db = client.db()
+await db.collection('users').insertOne({ email, passwordHash: hash, createdAt: new Date() })
+await client.close()
+console.log('Admin created:', email)
 ```
 
 ---
