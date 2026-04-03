@@ -30,8 +30,6 @@
     "preview": "astro preview",
     "astro": "astro",
     "seed": "node scripts/seed.mjs",
-    "seed:real": "node scripts/seed.real.mjs",
-    "create-admin": "node scripts/create-admin.mjs",
     "db:up": "docker compose up -d",
     "db:down": "docker compose down",
     "db:logs": "docker compose logs -f mongodb"

@@ -193,17 +193,24 @@ If you don't have the script, you can create the admin user manually via Node.js
 
 ```js
 // Run with: node --input-type=module
-import { createHash } from 'crypto'
-import { MongoClient } from 'mongodb'
+import { MongoClient, Binary } from 'mongodb'
+import { webcrypto } from 'crypto'
+const { subtle, getRandomValues } = webcrypto
 
-const MONGODB_URI = 'mongodb://admin:admin1234@localhost:27017/portfolio?authSource=admin'
-const email = 'your@email.com'      // change this
-const password = 'your-password'    // change this
+const MONGODB_URI = process.env.MONGODB_URI  // set in your .env
+const email = 'your@email.com'               // change this
+const password = 'your-password'             // change this
 
-const hash = createHash('sha256').update(password).digest('hex')
+// PBKDF2 hash (matches auth.ts)
+const salt = getRandomValues(new Uint8Array(16))
+const key = await subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveBits'])
+const derived = await subtle.deriveBits({ name: 'PBKDF2', salt, iterations: 200_000, hash: 'SHA-256' }, key, 256)
+const saltHex = Array.from(salt).map(b => b.toString(16).padStart(2, '0')).join('')
+const hashHex = Array.from(new Uint8Array(derived)).map(b => b.toString(16).padStart(2, '0')).join('')
+const passwordHash = `pbkdf2:${saltHex}:${hashHex}`
+
 const client = await MongoClient.connect(MONGODB_URI)
-const db = client.db()
-await db.collection('users').insertOne({ email, passwordHash: hash, createdAt: new Date() })
+await client.db('portfolio').collection('users').insertOne({ email, passwordHash, createdAt: new Date() })
 await client.close()
 console.log('Admin created:', email)
 ```
@@ -231,6 +238,17 @@ The download button calls `GET /api/download-resume`, which launches a headless 
 ```bash
 apt install -y chromium-browser
 ```
+
+---
+
+## 🔐 Security Notes
+
+- **Password hashing** — Admin passwords are hashed with PBKDF2 (200K iterations, SHA-256, random salt) using the Web Crypto API. No external dependencies required.
+- **Rate limiting** — Login attempts are limited to 5 per 15 minutes per IP. PDF resume downloads are limited to 5 per 10 minutes per IP. Both use in-memory storage and reset on server restart.
+- **JWT** — Sessions use HS256 JWTs stored in `httpOnly` cookies (8-hour expiry). Set a strong `JWT_SECRET` in production.
+- **MongoDB credentials** — The `docker-compose.yml` uses environment variables with dev defaults. Always change `MONGO_USER`, `MONGO_PASSWORD`, and `JWT_SECRET` before any internet-facing deployment.
+- **Mongo Express** — The DB UI is protected by basic auth and should never be exposed publicly. It is intended for local development only.
+- **Tracking** — Visitor IPs are hashed with SHA-256 before storage and are never stored in plain text.
 
 ---
 

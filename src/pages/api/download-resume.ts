@@ -1,6 +1,27 @@
 import type { APIRoute } from 'astro'
 
+// Rate limiting — max 5 PDF generations per IP per 10 minutes
+const pdfRateLimit = new Map<string, { count: number; resetAt: number }>()
+const PDF_MAX_REQUESTS = 5
+const PDF_WINDOW_MS = 10 * 60 * 1000
+
 export const GET: APIRoute = async ({ request }) => {
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0].trim() ?? 'local'
+    const now = Date.now()
+    const record = pdfRateLimit.get(ip)
+
+    if (record && now < record.resetAt) {
+        if (record.count >= PDF_MAX_REQUESTS) {
+            return new Response(JSON.stringify({ error: 'Too many requests. Try again later.' }), {
+                status: 429,
+                headers: { 'Content-Type': 'application/json' },
+            })
+        }
+        record.count++
+    } else {
+        pdfRateLimit.set(ip, { count: 1, resetAt: now + PDF_WINDOW_MS })
+    }
+
     // Forward the lang cookie so the resume renders in the correct locale
     const cookieHeader = request.headers.get('cookie') ?? ''
 

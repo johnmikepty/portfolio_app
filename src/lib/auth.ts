@@ -51,15 +51,56 @@ export async function verifyToken(token: string): Promise<Record<string, unknown
     }
 }
 
-// ─── Password hashing (SHA-256 simple) ───────────────────────────────────────
+// ─── Password hashing (PBKDF2 + salt) ────────────────────────────────────────
+// Uses Web Crypto API — no external dependencies.
+// Format stored in DB: pbkdf2:<salt_hex>:<hash_hex>
+
+const PBKDF2_ITERATIONS = 200_000
+const PBKDF2_HASH = 'SHA-256'
+const KEY_LENGTH = 32 // bytes
 
 export async function hashPassword(password: string): Promise<string> {
-    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(password))
-    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('')
+    const salt = crypto.getRandomValues(new Uint8Array(16))
+    const keyMaterial = await crypto.subtle.importKey(
+        'raw',
+        new TextEncoder().encode(password),
+        'PBKDF2',
+        false,
+        ['deriveBits']
+    )
+    const derived = await crypto.subtle.deriveBits(
+        { name: 'PBKDF2', salt, iterations: PBKDF2_ITERATIONS, hash: PBKDF2_HASH },
+        keyMaterial,
+        KEY_LENGTH * 8
+    )
+    const saltHex = Array.from(salt).map(b => b.toString(16).padStart(2, '0')).join('')
+    const hashHex = Array.from(new Uint8Array(derived)).map(b => b.toString(16).padStart(2, '0')).join('')
+    return `pbkdf2:${saltHex}:${hashHex}`
 }
 
-export async function verifyPassword(password: string, hash: string): Promise<boolean> {
-    return await hashPassword(password) === hash
+export async function verifyPassword(password: string, stored: string): Promise<boolean> {
+    // Legacy SHA-256 format (plain hex, no prefix) — still works, migrates on next login
+    if (!stored.startsWith('pbkdf2:')) {
+        const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(password))
+        const hex = Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('')
+        return hex === stored
+    }
+    const [, saltHex, hashHex] = stored.split(':')
+    const salt = new Uint8Array(saltHex.match(/.{2}/g)!.map(b => parseInt(b, 16)))
+    const keyMaterial = await crypto.subtle.importKey(
+        'raw',
+        new TextEncoder().encode(password),
+        'PBKDF2',
+        false,
+        ['deriveBits']
+    )
+    const derived = await crypto.subtle.deriveBits(
+        { name: 'PBKDF2', salt, iterations: PBKDF2_ITERATIONS, hash: PBKDF2_HASH },
+        keyMaterial,
+        KEY_LENGTH * 8
+    )
+    const candidateHex = Array.from(new Uint8Array(derived)).map(b => b.toString(16).padStart(2, '0')).join('')
+    return candidateHex === hashHex
 }
 
 // ─── Cookie helpers ───────────────────────────────────────────────────────────
